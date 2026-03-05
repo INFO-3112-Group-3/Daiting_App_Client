@@ -17,12 +17,12 @@ const Login = () => {
       <TextField fullWidth label="User Name"
         sx={{mb: "1em"}}
         value={userName}
-        onChange={setUserName}
+        onChange={(e) =>{setUserName(e.target.value); }}
       />
       <TextField fullWidth label="Password"
         sx={{mb: "1em"}}
         value={password}
-        onChange={setPassword}
+        onChange={(e) =>{setPassword(e.target.value); }}
       />
       <Button fullWidth variant="contained" onClick={LogIn}>
                 Log In
