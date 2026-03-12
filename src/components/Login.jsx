@@ -7,6 +7,9 @@ const Login = (props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    const SignUp = ( () => {
+      props.router("Register")
+    })
     const LogIn = (async () => {
       //call api to verify the user name and password is correct
       let response = await api.users.login(email,password);
@@ -29,7 +32,7 @@ const Login = (props) => {
     //NOTE: these are stub componets for the desgin, change for actaul development
     return(
     <>
-      <TextField fullWidth label="User Name"
+      <TextField fullWidth label="Email"
         sx={{mb: "1em"}}
         value={email}
         onChange={(e) =>{setEmail(e.target.value); }}
@@ -41,6 +44,9 @@ const Login = (props) => {
       />
       <Button fullWidth variant="contained" onClick={LogIn}>
                 Log In
+       </Button>
+       <Button fullWidth variant="contained" onClick={SignUp}>
+                Sign Up
        </Button>
 
     </>)

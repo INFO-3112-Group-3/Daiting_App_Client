@@ -30,7 +30,15 @@ const users = {
             body: JSON.stringify({Email : userEmail, Password : password})
         })
         return response;
-    }
+    },
+    register: async (userName,userEmail,password) => {
+        let reponse = await fetch(serverRoute("api/users/CreateUser"), {
+            headers,
+            method: 'POST',
+            body: JSON.stringify({Username : userName, Email: userEmail, Password: password})
+        })
+        return response;
+    },
 }
 
 export {
