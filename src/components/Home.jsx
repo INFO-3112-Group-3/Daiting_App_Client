@@ -1,10 +1,10 @@
-const Home = () => {
+const Home = (props) => {
 
 
 
     return(
     <>
-      LEAVE EMPTY FOR NOW.. JUST USING THIS TO TEST PAGE SWITCHING
+      <h2>LEAVE EMPTY FOR NOW.. JUST USING THIS TO TEST PAGE SWITCHING</h2>
     </>)
 };
 
