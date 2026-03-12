@@ -8,15 +8,19 @@ function App() {
   //state that will store the user that is currently logged in
   const [user, setUser] = useState();
 
+  const [pageToView, setPageToView] = userState(<Login/>);
+
   //function that will be send to the login component to update 
   const updateUser = ((user) =>
   {
     setUser(user);
+    //once home main page has been made.. add it here to change the page after sucsessful login
+    setPageToView();
   });
 
   return (
     <>
-      <Login props={updateUser}/>
+      {pageToView}
   </>)
 }
 
