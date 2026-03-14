@@ -7,6 +7,7 @@ const Login = (props) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    let user ={};
     const SignUp = ( () => {
       props.router("Register")
     })
@@ -17,15 +18,15 @@ const Login = (props) => {
       if (true)//response.ok)
       {
         //retrieve user from the response to then update the logined user
-        const user = await response.json();
-        props.updateUser(user);
+        //const user = await response.json();
+        //props.updateUser(user);
         if (user.FirstName != null)
         {
-          router("Home",user);
+          props.router("Home");
         }
         else
         {
-          router("Profile",user);
+          props.router("Profile");
         }
       }
       else
