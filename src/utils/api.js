@@ -39,6 +39,14 @@ const users = {
         })
         return response;
     },
+    update: async(user) => {
+        let reponse = await fetch(serverRoute("api/users/" +user.Username), {
+            headers,
+            method: 'PUT',
+            body: JSON.stringify(user)
+        })
+        return response;
+    },
 }
 
 export {

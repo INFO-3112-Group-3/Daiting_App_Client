@@ -8,14 +8,14 @@ import Home from './components/Home'
 function App() {
 
   //state that will store the user that is currently logged in
-  const [user, setUser] = useState();
+  const [user, setUser] = useState({Username: "jandoe", Password: "YES", Email: "Janedoe@email.com"});
 
   //function that will be send to the login component to update 
   const updateUser = ((user) =>
   {
     setUser(user);
-    //defaulting to home page, with the logged in user as "loggedUser" 
-    router("Home",user);
+    //if the user doesn't have a first name (I.E hasn't fully set up their profile, send them to the profile screen)
+    //so they are forced to do so before acsessing the rest of the page
   });
   
   //general method for switching between pages
@@ -31,6 +31,10 @@ function App() {
     else if (page =="Home")
     {
       setPageToView(<Home user={user} router ={router}/>);
+    }
+    else if (page =="Profile" && user != null) //should be impossible to be null, but gonna check anyway
+    {
+      setPageToView(<Profile user={user} router ={router} updateUser={updateUser}/>)
     }
 
 
