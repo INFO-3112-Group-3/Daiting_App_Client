@@ -12,7 +12,7 @@ const Profile = (props) => {
     //is a no-no
     const [currentUser,setCurrentUser] = useState(structuredClone(props.user));
 
-    const update = (() => {
+    const update = (async () => {
         setEditAcsess(true);
         let response = await api.users.update(currentUser);
         props.updateUser(currentUser);

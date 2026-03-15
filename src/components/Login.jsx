@@ -13,13 +13,13 @@ const Login = (props) => {
     })
     const LogIn = (async () => {
       //call api to verify the user name and password is correct
-      //let response = await api.users.login(email,password);
+      let response = await api.users.login(email,password);
       //if its correct
-      if (true)//response.ok)
+      if (response.ok)
       {
         //retrieve user from the response to then update the logined user
-        //const user = await response.json();
-        //props.updateUser(user);
+        const user = await response.json();
+        props.updateUser(user);
         if (user.FirstName != null)
         {
           props.router("Home");
