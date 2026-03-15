@@ -33,7 +33,7 @@ function App() {
       {pageToView === "Login" && (
         <Login updateUser={updateUser} router={router}/>
       )}
-      {pageToView === "Regiser" && (
+      {pageToView === "Register" && (
         <Register router={router}/>
       )}
       {pageToView === "Home" && (

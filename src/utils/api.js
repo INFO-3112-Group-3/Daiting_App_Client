@@ -32,7 +32,7 @@ const users = {
         return response;
     },
     register: async (userName,userEmail,password) => {
-        let reponse = await fetch(serverRoute("api/users/CreateUser"), {
+        let response = await fetch(serverRoute("api/users/CreateUser"), {
             headers,
             method: 'POST',
             body: JSON.stringify({Username : userName, Email: userEmail, Password: password})
@@ -40,7 +40,7 @@ const users = {
         return response;
     },
     update: async(user) => {
-        let reponse = await fetch(serverRoute("api/users/" +user.Username), {
+        let response = await fetch(serverRoute("api/users/" +user.Username), {
             headers,
             method: 'PUT',
             body: JSON.stringify(user)
