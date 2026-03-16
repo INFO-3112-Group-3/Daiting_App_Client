@@ -14,7 +14,7 @@ const Register = (props) => {
       //if its correct
       if (response.ok)
       {
-        props.switchToLogin();
+        props.rotuer("Login");
       }
       else
       {
