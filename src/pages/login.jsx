@@ -15,7 +15,7 @@ const container = {
 	visible: { opacity: 1, transition: { duration: 0.3 } },
 }
 
-export default function LoginPage() {
+export default function LoginPage(props) {
 	const navigate = useNavigate()
 	// Start with the mock credentials to avoid empty inputs.
 	const [form, setForm] = useState([])
