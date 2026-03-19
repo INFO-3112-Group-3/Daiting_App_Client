@@ -55,6 +55,9 @@ export default function RegisterPage() {
 	// Skip networking calls and forward the user into the app.
 	const handleSubmit = (event) => {
 		event.preventDefault()
+
+		
+
 		navigate('/profile')
 	}
 

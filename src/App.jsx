@@ -7,6 +7,7 @@ import RegisterPage from './pages/register'
 import ProfilePage from './pages/profile'
 import MatchesPage from './pages/matches'
 import { Footer } from './components/Footer'
+import {useState} from 'react'
 
 // Quick config for the desktop nav bar.
 const navItems = [
@@ -15,7 +16,21 @@ const navItems = [
 	{ label: 'Profile', path: '/profile', icon: User },
 ]
 
+
+
 function App() {
+	
+   const [user, setUser] = useState();
+
+   //function that will be send to the login component to update 
+   const updateUser = ((selUser) =>
+   {
+    console.log(selUser);
+    setUser({...selUser});
+    //if the user doesn't have a first name (I.E hasn't fully set up their profile, send them to the profile screen)
+    //so they are forced to do so before acsessing the rest of the page
+  	});
+	
 	// React Router gives us the location so AnimatePresence can animate route exits.
 	const location = useLocation()
 
@@ -59,9 +74,9 @@ function App() {
 						{/* Match each route to a page and allow animated transitions. */}
 						<Routes location={location} key={location.pathname}>
 							<Route index element={<LoginPage />} />
-							<Route path="/register" element={<RegisterPage />} />
-							<Route path="/matches" element={<MatchesPage />} />
-							<Route path="/profile" element={<ProfilePage />} />
+							<Route path="/register" state={updateUser} element={<RegisterPage />} />
+							<Route path="/matches" state={user} element={<MatchesPage />} />
+							<Route path="/profile" state={user} element={<ProfilePage />} />
 							<Route path="*" element={<Navigate to="/" replace />} />
 						</Routes>
 					</AnimatePresence>

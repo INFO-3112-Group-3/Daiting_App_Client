@@ -5,12 +5,9 @@ import { LockKeyhole, Mail } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '../components/Button'
 import { InputField } from '../components/InputField'
-
+import * as api from "../utils/api"
 // Placeholder credentials so the UI feels populated when the page loads.
-const mockCredentials = {
-	email: 'root@find.it',
-	password: 'mesh-4096#secure',
-}
+
 
 // Simple fade animation that wraps the entire page.
 const container = {
@@ -21,7 +18,7 @@ const container = {
 export default function LoginPage() {
 	const navigate = useNavigate()
 	// Start with the mock credentials to avoid empty inputs.
-	const [form, setForm] = useState(mockCredentials)
+	const [form, setForm] = useState([])
 
 	// Keep form state in sync with both fields.
 	const handleChange = ({ target }) => {
@@ -29,9 +26,21 @@ export default function LoginPage() {
 	}
 
 	// Prevent the default form submission and push the user to the profile page.
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault()
-		navigate('/profile')
+
+		let response = await api.users.login(form.email,form.password);
+
+		if (response.ok)
+		{
+			//retrieve user from the response to then update the logined user
+        	const user = await response.json();
+			state.updateUser(user);
+			console.log(user);
+			//change this to the profile
+			navigate('/profile')
+		}
+
 	}
 
 	return (
