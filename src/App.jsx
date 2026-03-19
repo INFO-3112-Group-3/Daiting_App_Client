@@ -74,9 +74,9 @@ function App() {
 						{/* Match each route to a page and allow animated transitions. */}
 						<Routes location={location} key={location.pathname}>
 							<Route index element={<LoginPage />} />
-							<Route path="/register" state={updateUser} element={<RegisterPage />} />
-							<Route path="/matches" state={user} element={<MatchesPage />} />
-							<Route path="/profile" state={user} element={<ProfilePage />} />
+							<Route path="/register" element={<RegisterPage props={updateUser}/>} />
+							<Route path="/matches" element={<MatchesPage props={user}/>} />
+							<Route path="/profile" element={<ProfilePage props={user}/>} />
 							<Route path="*" element={<Navigate to="/" replace />} />
 						</Routes>
 					</AnimatePresence>
