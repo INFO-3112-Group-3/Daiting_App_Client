@@ -5,15 +5,7 @@ import { MapPinned } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { Button } from '../components/Button'
 import { InputField } from '../components/InputField'
-
-// Prefill the form so the UI feels alive before wiring up APIs.
-const mockRegister = {
-	name: 'Nova Sterling',
-	email: 'nova@find.it',
-	stack: 'Realtime AI + Edge',
-	timezone: 'UTC+1 / Remote-first',
-	bio: 'Bleeding-edge builder mapping digital chemistry + IRL curiosity.',
-}
+import * as api from "../utils/api";
 
 // Tags used in the match preferences chip list.
 const preferenceOptions = [
@@ -31,7 +23,7 @@ const container = {
 export default function RegisterPage() {
 	const navigate = useNavigate()
 	// Local form + preference state for the demo experience.
-	const [form, setForm] = useState(mockRegister)
+	const [form, setForm] = useState([])
 	const [selectedPrefs, setSelectedPrefs] = useState(new Set(preferenceOptions))
 
 	// Toggle individual preference chips in a Set to simplify lookup.
@@ -53,12 +45,20 @@ export default function RegisterPage() {
 	}
 
 	// Skip networking calls and forward the user into the app.
-	const handleSubmit = (event) => {
+	const handleSubmit = async (event) => {
 		event.preventDefault()
-
-		
-
-		navigate('/profile')
+	let response = await api.users.register(form.username,form.email,form.password)
+      //if its correct
+      if (response.ok)
+      {
+       navigate('/');
+      }
+      else
+      {
+        //STUB: once desgin has been finalized, lmk so I can add in this invalid message in a way that makes sense
+        const errorText = await response.text();
+        console.error(`Register failed: ${errorText}`);
+      }
 	}
 
 	return (
@@ -77,12 +77,14 @@ export default function RegisterPage() {
 
 				{/* Vertical form layout built with the shared InputField component. */}
 				<form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-6">
-					<InputField label="Full Name" name="name" value={form.name} onChange={handleChange} placeholder="Nova Sterling" />
-					<InputField label="Full Name" name="name" value={form.name} onChange={handleChange} placeholder="Nova Sterling" tone="dark" />
-					<InputField label="Email" type="email" name="email" value={form.email} onChange={handleChange} placeholder="nova@find.it" tone="dark" />
-					<InputField label="Role" name="stack" value={form.stack} onChange={handleChange} placeholder="Full Stack Dev" tone="dark" />
-					<InputField label="Timezone" name="timezone" value={form.timezone} onChange={handleChange} placeholder="UTC+1 / Remote-first" icon={MapPinned} tone="dark" />
-					<InputField
+					{/*<InputField label="Full Name" name="name" value={form.name} onChange={handleChange} placeholder="Nova Sterling" />
+					<InputField label="Full Name" name="name" value={form.name} onChange={handleChange} placeholder="Nova Sterling" tone="dark" />*/}
+					<InputField label="Username" type="usename" name="username" value={form.Username} onChange={handleChange} placeholder="Username" tone="dark" />
+					<InputField label="Email" type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" tone="dark" />
+					<InputField label="Password" type="password" name="password" value={form.password} onChange={handleChange} placeholder="Password" tone="dark" />
+					{/*<InputField label="Role" name="stack" value={form.stack} onChange={handleChange} placeholder="Full Stack Dev" tone="dark" />
+					<InputField label="Timezone" name="timezone" value={form.timezone} onChange={handleChange} placeholder="UTC+1 / Remote-first" icon={MapPinned} tone="dark" />*/}
+					{/*<InputField
 						label="Bio"
 						name="bio"
 						multiline
@@ -91,7 +93,7 @@ export default function RegisterPage() {
 						onChange={handleChange}
 						placeholder="What are you building these days?"
 						tone="dark"
-					/>
+					/> */}
 
 					{/* Preference chips mimic filters until backend matchmaking exists. */}
 					<div className="rounded-[18px] border border-[#2A2A36] bg-[#1B1B24] p-4">
