@@ -73,8 +73,8 @@ function App() {
 					<AnimatePresence mode="wait">
 						{/* Match each route to a page and allow animated transitions. */}
 						<Routes location={location} key={location.pathname}>
-							<Route index element={<LoginPage />} />
-							<Route path="/register" element={<RegisterPage updateUser={updateUser}/>} />
+							<Route index element={<LoginPage updateUser={updateUser}/>} />
+							<Route path="/register" element={<RegisterPage />} />
 							<Route path="/matches" element={<MatchesPage user={user}/>} />
 							<Route path="/profile" element={<ProfilePage user={user}/>} />
 							<Route path="*" element={<Navigate to="/" replace />} />
