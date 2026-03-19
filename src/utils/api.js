@@ -31,11 +31,11 @@ const users = {
         })
         return response;
     },
-    register: async (userName,userEmail,password) => {
+    register: async (userName,userEmail,password,city,region) => {
         let response = await fetch(serverRoute("api/users/"), {
             headers,
             method: 'POST',
-            body: JSON.stringify({Username : userName, Email: userEmail, Password: password})
+            body: JSON.stringify({Username : userName, Email: userEmail, Password: password, City:city,Region:region})
         })
         return response;
     },

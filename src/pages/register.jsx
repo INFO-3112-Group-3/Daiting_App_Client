@@ -47,7 +47,7 @@ export default function RegisterPage() {
 	// Skip networking calls and forward the user into the app.
 	const handleSubmit = async (event) => {
 		event.preventDefault()
-	let response = await api.users.register(form.username,form.email,form.password)
+	let response = await api.users.register(form.username,form.email,form.password,form.city,form.region)
       //if its correct
       if (response.ok)
       {
@@ -82,6 +82,8 @@ export default function RegisterPage() {
 					<InputField label="Username" type="usename" name="username" value={form.Username} onChange={handleChange} placeholder="Username" tone="dark" />
 					<InputField label="Email" type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" tone="dark" />
 					<InputField label="Password" type="password" name="password" value={form.password} onChange={handleChange} placeholder="Password" tone="dark" />
+					<InputField label="City" type="city" name="city" value={form.city} onChange={handleChange} placeholder="City" tone="dark" />
+					<InputField label="Region" type="region" name="region" value={form.region} onChange={handleChange} placeholder="region" tone="dark" />
 					{/*<InputField label="Role" name="stack" value={form.stack} onChange={handleChange} placeholder="Full Stack Dev" tone="dark" />
 					<InputField label="Timezone" name="timezone" value={form.timezone} onChange={handleChange} placeholder="UTC+1 / Remote-first" icon={MapPinned} tone="dark" />*/}
 					{/*<InputField
