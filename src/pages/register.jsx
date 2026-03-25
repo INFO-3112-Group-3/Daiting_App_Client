@@ -47,7 +47,19 @@ export default function RegisterPage() {
 	// Skip networking calls and forward the user into the app.
 	const handleSubmit = async (event) => {
 		event.preventDefault()
-	let response = await api.users.register(form.username,form.email,form.password,form.city,form.region)
+	let user;
+	user.Username = form.username;
+	user.Email = form.email;
+	user.Password = form.password;
+	user.City = form.City;
+	user.Region = form.region;
+	user.Gender = form.gender;
+	user.Firstname = form.firstname;
+	user.Lastname = form.lastname;
+	user.Orientation = form.orientation;
+	user.JobTitle = form.jobtitle;
+	user.Bio = form.bio;
+	let response = await api.users.register(user);
       //if its correct
       if (response.ok)
       {
@@ -77,27 +89,28 @@ export default function RegisterPage() {
 
 				{/* Vertical form layout built with the shared InputField component. */}
 				<form onSubmit={handleSubmit} className="mt-8 flex flex-col gap-6">
-					{/*<InputField label="Full Name" name="name" value={form.name} onChange={handleChange} placeholder="Nova Sterling" />
-					<InputField label="Full Name" name="name" value={form.name} onChange={handleChange} placeholder="Nova Sterling" tone="dark" />*/}
-					<InputField label="Username" type="usename" name="username" value={form.Username} onChange={handleChange} placeholder="Username" tone="dark" />
+					<InputField label="First Name" name="firstname" value={form.firstname} onChange={handleChange} placeholder="First name" tone ="dark"/>
+					<InputField label="Last Name" name="lastname" value={form.lastname} onChange={handleChange} placeholder="Last Name" tone="dark" />
+					<InputField label="Gender" name="gender" value={form.gender} onChange={handleChange} placeholder="Gender" />
+					<InputField label="Orientation" name="orientation" value={form.orientation} onChange={handleChange} placeholder="Orientation" />
+					<InputField label="Username" type="username" name="username" value={form.Username} onChange={handleChange} placeholder="Username" tone="dark" />
 					<InputField label="Email" type="email" name="email" value={form.email} onChange={handleChange} placeholder="Email" tone="dark" />
 					<InputField label="Password" type="password" name="password" value={form.password} onChange={handleChange} placeholder="Password" tone="dark" />
 					<InputField label="City" type="city" name="city" value={form.city} onChange={handleChange} placeholder="City" tone="dark" />
-					<InputField label="Region" type="region" name="region" value={form.region} onChange={handleChange} placeholder="region" tone="dark" />
-					{/*<InputField label="Role" name="stack" value={form.stack} onChange={handleChange} placeholder="Full Stack Dev" tone="dark" />
-					<InputField label="Timezone" name="timezone" value={form.timezone} onChange={handleChange} placeholder="UTC+1 / Remote-first" icon={MapPinned} tone="dark" />*/}
-					{/*<InputField
+					<InputField label="Region" type="region" name="region" value={form.region} onChange={handleChange} placeholder="Region" tone="dark" />
+					<InputField label="Job Title" type="jobtitle" name="region" value={form.jobtitle} onChange={handleChange} placeholder="jobtitle" tone="dark" />
+					{<InputField
 						label="Bio"
 						name="bio"
 						multiline
 						rows={3}
 						value={form.bio}
 						onChange={handleChange}
-						placeholder="What are you building these days?"
+						placeholder="Enter your Bio"
 						tone="dark"
-					/> */}
+					/>}
 
-					{/* Preference chips mimic filters until backend matchmaking exists. */}
+					{/* Preference chips mimic filters until backend matchmaking exists. 
 					<div className="rounded-[18px] border border-[#2A2A36] bg-[#1B1B24] p-4">
 						<div className="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-[#9B9BA6]">
 							<span>Match preferences</span>
@@ -120,6 +133,7 @@ export default function RegisterPage() {
 							))}
 						</div>
 					</div>
+						*/}
 
 					<Button type="submit" variant="gradient" className="w-full py-3">
 						Create profile
