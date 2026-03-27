@@ -47,7 +47,7 @@ export default function RegisterPage() {
 	// Skip networking calls and forward the user into the app.
 	const handleSubmit = async (event) => {
 		event.preventDefault()
-	let user;
+	let user = new Object();
 	user.Username = form.username;
 	user.Email = form.email;
 	user.Password = form.password;
@@ -98,7 +98,7 @@ export default function RegisterPage() {
 					<InputField label="Password" type="password" name="password" value={form.password} onChange={handleChange} placeholder="Password" tone="dark" />
 					<InputField label="City" type="city" name="city" value={form.city} onChange={handleChange} placeholder="City" tone="dark" />
 					<InputField label="Region" type="region" name="region" value={form.region} onChange={handleChange} placeholder="Region" tone="dark" />
-					<InputField label="Job Title" type="jobtitle" name="region" value={form.jobtitle} onChange={handleChange} placeholder="jobtitle" tone="dark" />
+					<InputField label="Job Title" type="jobtitle" name="jobtitle" value={form.jobtitle} onChange={handleChange} placeholder="jobtitle" tone="dark" />
 					{<InputField
 						label="Bio"
 						name="bio"
