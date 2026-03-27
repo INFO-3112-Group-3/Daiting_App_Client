@@ -23,6 +23,7 @@ const users = {
         let data = await response.json();
         return data;
     },
+
     login: async(userEmail,password) => {
         let response = await fetch(serverRoute("api/users/login"), {
             headers,
@@ -31,6 +32,7 @@ const users = {
         })
         return response;
     },
+
     register: async (userName,userEmail,password,city,region) => {
         let response = await fetch(serverRoute("api/users/"), {
             headers,
@@ -39,8 +41,9 @@ const users = {
         })
         return response;
     },
+    
     update: async(user) => {
-        let response = await fetch(serverRoute("api/users/" +user.Username), {
+        let response = await fetch(serverRoute("api/users/" +user.username), {
             headers,
             method: 'PUT',
             body: JSON.stringify(user)
