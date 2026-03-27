@@ -10,8 +10,10 @@ export default function EditProfilePage({ user, updateUser }) {
   const [loading, setLoading] = useState(true)
   console.log("LOGIN USER:", user)
 
+  // Full user data, do not send to API, contains password hash.
   const [fullUser, setFullUser] = useState(null)
 
+  // Form state for editable fields.
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
@@ -23,6 +25,7 @@ export default function EditProfilePage({ user, updateUser }) {
     notes: ''
   })
 
+  // Load user info when props change.
   useEffect(() => {
     async function loadUser() {
       if (!user?.email) return
@@ -55,6 +58,7 @@ export default function EditProfilePage({ user, updateUser }) {
     }))
   }
 
+  // Accept profile changes, update user on server and in app state, then navigate to profile.
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -73,6 +77,52 @@ export default function EditProfilePage({ user, updateUser }) {
   navigate('/profile')
   }
 
+  // Control if fields are editable.
+  const [editable, setEditable] = useState({
+    firstName: false,
+    lastName: false,
+    gender: false,
+    orientation: false,
+    city: false,
+    region: false,
+    occupation: false,
+    notes: false
+  })
+
+  // Toggle edit mode.
+  const toggleEdit = (field) => {
+    setEditable((prev) => ({
+      ...prev,
+      [field]: !prev[field]
+    }))
+  }
+
+  // Field which can be edited, with an edit/lock button.
+  const renderEditableField = (fieldKey, label, placeholder) => {
+    return (
+      <div className="flex items-center gap-2">
+        <span className="text-sm text-white">{label}:</span>
+
+        <InputField
+          name={fieldKey}
+          value={form[fieldKey] || ''}
+          onChange={handleChange}
+          placeholder={placeholder}
+          disabled={!editable[fieldKey]}
+        />
+
+        <button
+          type="button"
+          onClick={() => toggleEdit(fieldKey)}
+          className="text-sm text-blue-400"
+        >
+          {editable[fieldKey] ? "Lock" : "Edit"}
+        </button>
+      </div>
+    )
+  }
+
+  // So it wont explode when user isnt loaded yet.
   if (loading) {
     return <div className="p-6 text-white">Loading profile...</div>
   }
@@ -82,61 +132,15 @@ export default function EditProfilePage({ user, updateUser }) {
       <h1 className="text-xl text-white mb-4">Edit Profile</h1>
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <InputField
-          name="firstName"
-          value={form.firstName}
-          onChange={handleChange}
-          placeholder="First Name"
-        />
-
-        <InputField
-          name="lastName"
-          value={form.lastName}
-          onChange={handleChange}
-          placeholder="Last Name"
-        />
-
-        <InputField
-          name="gender"
-          value={form.gender}
-          onChange={handleChange}
-          placeholder="Gender"
-        />
-
-        <InputField
-          name="orientation"
-          value={form.orientation}
-          onChange={handleChange}
-          placeholder="Orientation"
-        />       
-
-        <InputField
-          name="city"
-          value={form.city}
-          onChange={handleChange}
-          placeholder="City"
-        />
-
-        <InputField
-          name="region"
-          value={form.region}
-          onChange={handleChange}
-          placeholder="Region"
-        />
-
-        <InputField
-          name="occupation"
-          value={form.occupation}
-          onChange={handleChange}
-          placeholder="Occupation"
-        />
-
-        <InputField
-          name="notes"  
-          value={form.notes}
-          onChange={handleChange}
-          placeholder="Notes"
-        />
+        
+        {renderEditableField("firstName", "First Name", "First Name")}
+        {renderEditableField("lastName", "Last Name", "Last Name")}
+        {renderEditableField("gender", "Gender", "Gender")}
+        {renderEditableField("orientation", "Orientation", "Orientation")}
+        {renderEditableField("city", "City", "City")}
+        {renderEditableField("region", "Region", "Region")}
+        {renderEditableField("occupation", "Occupation", "Occupation")}
+        {renderEditableField("notes", "Notes", "Notes")}
 
         <Button type="submit" variant="gradient">
           Save Changes
