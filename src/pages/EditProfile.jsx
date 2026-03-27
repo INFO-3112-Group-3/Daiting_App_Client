@@ -60,15 +60,17 @@ export default function EditProfilePage({ user, updateUser }) {
 
     if (!fullUser) return
 
-    const updatedUser = {
-      ...fullUser,
-      ...form
-    }
+  const { password, ...safeUser } = fullUser
 
-    await users.update(updatedUser)
-    updateUser(updatedUser)
+  const updatedUser = {
+    ...safeUser,
+    ...form
+  }
 
-    navigate('/profile')
+  await users.update(updatedUser)
+  updateUser(updatedUser)
+
+  navigate('/profile')
   }
 
   if (loading) {
