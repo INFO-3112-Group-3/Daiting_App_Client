@@ -1,7 +1,3 @@
-const API_IP = 'https://localhost';
-const API_PORT = 7195;
-
-
 const headers = {
     // https://www.rfc-editor.org/rfc/rfc7231#section-5.3.2
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
@@ -27,12 +23,12 @@ const users = {
         let response = await fetch(serverRoute("api/users/login"), {
             headers,
             method: 'POST',
-            body: JSON.stringify({Email : userEmail, Password : password})
+            body: JSON.stringify({email : userEmail, password : password})
         })
         return response;
     },
     register: async (user) => {
-        let response = await fetch(serverRoute("api/users/"), {
+        let response = await fetch(serverRoute("api/users/register"), {
             headers,
             method: 'POST',
             body: JSON.stringify(user)

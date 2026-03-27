@@ -1,11 +1,11 @@
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import * as api from "../utils/api"
 import { InputField } from '../components/InputField'
 import { useState } from 'react'
 export default function SignIn(props) {
 
 	const [form, setForm] = useState([])
-
+  const navigate = useNavigate();
 	// Keep form state in sync with both fields.
 	const handleChange = ({ target }) => {
 		setForm((prev) => ({ ...prev, [target.name]: target.value }))
@@ -22,7 +22,7 @@ export default function SignIn(props) {
 			//retrieve user from the response to then update the logined user
         	const user = await response.json();
 			props.updateUser(user);
-
+			console.log(user);
 			//change this to the profile
 			navigate('/profile')
 		}

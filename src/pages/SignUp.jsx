@@ -47,19 +47,20 @@ export default function SignUp() {
       event.preventDefault()
     let user = new Object();
 
+    user.Salutation = form.salutation;
     user.Email = form.email;
     user.Password = form.password;
     user.Gender = form.gender;
     user.Firstname = form.firstname;
     user.Lastname = form.lastname;
-    user.Salutation = form.salutation;   
-    //currently storing this inefficently... should change that
-    user.Brithday = new Date(form.year,months.indexOf(form.month)-1,form.day,12,0,0);
+    user.ContactInfo = form.contactinfo;
+    user.ContactMethod = form.contactmethod;
+    user.Birthday = new Date(form.year,months.indexOf(form.month),form.day).toISOString(); 
     let response = await api.users.register(user);
       //if its correct
       if (response.ok)
       {
-       navigate('/');
+       navigate('/signin');
       }
       else
       {
