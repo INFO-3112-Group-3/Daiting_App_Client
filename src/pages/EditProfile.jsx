@@ -25,6 +25,10 @@ export default function EditProfilePage({ user, updateUser }) {
     notes: ''
   })
 
+  // Separate handler for multi skills field.
+  const [skillInput, setSkillInput] = useState('')
+  const [skills, setSkills] = useState([])
+
   // Load user info when props change.
   useEffect(() => {
     async function loadUser() {
@@ -45,6 +49,8 @@ export default function EditProfilePage({ user, updateUser }) {
         notes: data.notes || ''
       })
 
+      setSkills(data.skills || [])
+
       setLoading(false)
     }
 
@@ -64,17 +70,18 @@ export default function EditProfilePage({ user, updateUser }) {
 
     if (!fullUser) return
 
-  const { password, ...safeUser } = fullUser
+    const { password, ...safeUser } = fullUser
 
-  const updatedUser = {
-    ...safeUser,
-    ...form
-  }
+    const updatedUser = {
+      ...safeUser,
+      ...form,
+      skills: skills
+    }
 
-  await users.update(updatedUser)
-  updateUser(updatedUser)
+    await users.update(updatedUser)
+    updateUser(updatedUser)
 
-  navigate('/profile')
+    navigate('/profile')
   }
 
   // Control if fields are editable.
@@ -86,7 +93,8 @@ export default function EditProfilePage({ user, updateUser }) {
     city: false,
     region: false,
     occupation: false,
-    notes: false
+    notes: false,
+    skills: false 
   })
 
   // Toggle edit mode.
@@ -122,6 +130,94 @@ export default function EditProfilePage({ user, updateUser }) {
     )
   }
 
+  // Skills field functionality.
+
+  const addSkill = () => {
+    if (!skillInput.trim()) return
+
+    setSkills((prev) => [...prev, skillInput.trim()])
+    setSkillInput('')
+  }
+
+  const removeSkill = (index) => {
+    setSkills((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const handleSkillKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      addSkill()
+    }
+  }
+
+  const renderSkillsField = () => {
+    return (
+      <div className="flex flex-col gap-2">
+        <div className="flex items-center gap-2">
+          <span className="text-sm text-white">Skills:</span>
+
+          <button
+            type="button"
+            onClick={() => toggleEdit("skills")}
+            className="text-sm text-blue-400"
+          >
+            {editable.skills ? "Lock" : "Edit"}
+          </button>
+        </div>
+
+        {/* Input only enabled when editing */}
+        {editable.skills && (
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={skillInput}
+              onChange={(e) => setSkillInput(e.target.value)}
+              onKeyDown={handleSkillKeyDown}
+              placeholder="Add a skill"
+              className="flex-1 rounded bg-[#1B1B24] text-white px-3 py-2"
+            />
+
+            <button
+              type="button"
+              onClick={addSkill}
+              className="text-sm text-blue-400"
+            >
+              Add
+            </button>
+          </div>
+        )}
+
+        {/* Skill list */}
+        <div className="flex flex-wrap gap-2">
+          {skills.map((skill, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-2 bg-[#2A2A36] px-3 py-1 rounded-full text-white text-sm"
+            >
+              {skill}
+
+              {editable.skills && (
+                <button
+                  type="button"
+                  onClick={() => removeSkill(index)}
+                  className="text-red-400"
+                >
+                  X
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
+  //////////////////////////////////////////////////////////////////////
+  // Rendering....
+  //
+  //
+
+
   // So it wont explode when user isnt loaded yet.
   if (loading) {
     return <div className="p-6 text-white">Loading profile...</div>
@@ -140,6 +236,7 @@ export default function EditProfilePage({ user, updateUser }) {
         {renderEditableField("city", "City", "City")}
         {renderEditableField("region", "Region", "Region")}
         {renderEditableField("occupation", "Occupation", "Occupation")}
+        {renderSkillsField()}
         {renderEditableField("notes", "Notes", "Notes")}
 
         <Button type="submit" variant="gradient">
