@@ -8,28 +8,34 @@ import ProfilePage from './pages/profile'
 import MatchesPage from './pages/matches'
 import { Footer } from './components/Footer'
 import {useState} from 'react'
+import EditProfilePage from './pages/EditProfile'
 
 // Quick config for the desktop nav bar.
-const navItems = [
+const baseNavItems = [
 	{ label: 'Home', path: '/', icon: Home },
 	{ label: 'Matches', path: '/matches', icon: Heart },
-	{ label: 'Profile', path: '/profile', icon: User },
+	{ label: 'Profile', path: '/profile', icon: User }
 ]
 
 
 
 function App() {
-	
-   const [user, setUser] = useState();
+	const [user, setUser] = useState();
+
+	// If the user is logged in, show the Edit Profile link in the nav bar.
+	const navItems = user
+	? [...baseNavItems, { label: 'Edit Profile', path: '/edit-profile', icon: User }]
+	: baseNavItems;
 
    //function that will be send to the login component to update 
    const updateUser = ((selUser) =>
    {
     console.log(selUser);
     setUser({...selUser});
+	
     //if the user doesn't have a first name (I.E hasn't fully set up their profile, send them to the profile screen)
     //so they are forced to do so before acsessing the rest of the page
-  	});
+	});
 	
 	// React Router gives us the location so AnimatePresence can animate route exits.
 	const location = useLocation()
@@ -78,6 +84,9 @@ function App() {
 							<Route path="/matches" element={<MatchesPage user={user}/>} />
 							<Route path="/profile" element={<ProfilePage user={user}/>} />
 							<Route path="*" element={<Navigate to="/" replace />} />
+							<Route path="/edit-profile" 
+								element={<EditProfilePage user={user} updateUser={updateUser} />} 
+							/>
 						</Routes>
 					</AnimatePresence>
 				</main>
