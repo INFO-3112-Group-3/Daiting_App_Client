@@ -6,16 +6,21 @@ import { users } from '../utils/api'
 import TagInput from '../components/TagInput'
 
 export default function EditProfilePage({ user, updateUser }) {
+  // Top navbar from App.jsx.
   const navigate = useNavigate()
 
-  const [loading, setLoading] = useState(true)
-  console.log("LOGIN USER:", user)
-
-  // Full user data, do not send to API, contains password hash.
-  const [fullUser, setFullUser] = useState(null)
-
-  // Form state for editable fields.
-  const [form, setForm] = useState({
+  //////////////////////////////////////////////////////////////////////
+  // States....
+  //  - 'loading' while fetching user data from server.
+  //  - 'fullUser' to store complete user data from server.
+  //      (do not send to API, contains password hash.)
+  //  - 'form' for controlled inputs of editable fields.
+  //  - 'skills' and 'interests' for the tag input fields.
+  //  - 'editable' to control which fields are currently editable.
+  //////////////////////////////////////////////////////////////////////
+  const [loading, setLoading] = useState(true) 
+  const [fullUser, setFullUser] = useState(null) // Full user data, 
+  const [form, setForm] = useState({   // Form state for editable fields.
     firstName: '',
     lastName: '',
     gender: '',
@@ -26,39 +31,28 @@ export default function EditProfilePage({ user, updateUser }) {
     notes: ''
   })
 
-  // Separate handler for multi skills/interests field.
   const [skills, setSkills] = useState([])
   const [interests, setInterests] = useState([])
+  const [editable, setEditable] = useState({
+    firstName: false,
+    lastName: false,
+    gender: false,
+    orientation: false,
+    city: false,
+    region: false,
+    occupation: false,
+    notes: false,
+    skills: false 
+  })
 
-  // Load user info when props change.
-  useEffect(() => {
-    async function loadUser() {
-      if (!user?.email) return
-
-      const data = await users.getUserInformation(user.email)
-      console.log("FULL USER API RESPONSE:", data)
-      setFullUser(data)
-
-      setForm({
-        firstName: data.firstName || '',
-        lastName: data.lastName || '',
-        gender: data.gender || '',
-        orientation: data.orientation || '',
-        city: data.city || '',
-        region: data.region || '',
-        occupation: data.occupation || '',
-        notes: data.notes || ''
-      })
-
-      setSkills(data.skills || [])
-      setInterests(data.interests || [])
-
-      setLoading(false)
-    }
-
-    loadUser()
-  }, [user])
-
+  //////////////////////////////////////////////////////////////////////
+  // Functionality....
+  //  - 'handleChange' for controlled inputs.
+  //  - 'handleSubmit' to accept changes, update user on server and in app state, then navigate to profile.
+  //  - 'toggleEdit' to toggle edit mode for each field.
+  //  - 'useEffect' to load user info when props change.
+  //////////////////////////////////////////////////////////////////////
+  
   const handleChange = ({ target }) => {
     setForm((prev) => ({
       ...prev,
@@ -66,7 +60,6 @@ export default function EditProfilePage({ user, updateUser }) {
     }))
   }
 
-  // Accept profile changes, update user on server and in app state, then navigate to profile.
   const handleSubmit = async (e) => {
     e.preventDefault()
 
@@ -98,20 +91,6 @@ export default function EditProfilePage({ user, updateUser }) {
     navigate('/profile')
   }
 
-  // Control if fields are editable.
-  const [editable, setEditable] = useState({
-    firstName: false,
-    lastName: false,
-    gender: false,
-    orientation: false,
-    city: false,
-    region: false,
-    occupation: false,
-    notes: false,
-    skills: false 
-  })
-
-  // Toggle edit mode.
   const toggleEdit = (field) => {
     setEditable((prev) => ({
       ...prev,
@@ -119,7 +98,43 @@ export default function EditProfilePage({ user, updateUser }) {
     }))
   }
 
-  // Field which can be edited, with an edit/lock button.
+  useEffect(() => {
+    async function loadUser() {
+      if (!user?.email) return
+
+      const data = await users.getUserInformation(user.email)
+      console.log("FULL USER API RESPONSE:", data)
+      setFullUser(data)
+
+      setForm({
+        firstName: data.firstName || '',
+        lastName: data.lastName || '',
+        gender: data.gender || '',
+        orientation: data.orientation || '',
+        city: data.city || '',
+        region: data.region || '',
+        occupation: data.occupation || '',
+        notes: data.notes || ''
+      })
+
+      setSkills(data.skills || [])
+      setInterests(data.interests || [])
+
+      setLoading(false)
+    }
+
+    loadUser()
+  }, [user])
+
+  //////////////////////////////////////////////////////////////////////
+  // Rendering....
+  //  - Loading state while fetching user data.
+  //  - Editable fields:
+  //      - 'renderEditableField' for simple text fields.
+  //      - TagInput for skills/interests. -> from components/TagInput.jsx
+  //  - Save button at the end to submit changes.
+  //////////////////////////////////////////////////////////////////////
+
   const renderEditableField = (fieldKey, label, placeholder) => {
     return (
       <div className="flex items-center gap-2">
@@ -144,13 +159,6 @@ export default function EditProfilePage({ user, updateUser }) {
     )
   }
 
-  //////////////////////////////////////////////////////////////////////
-  // Rendering....
-  //
-  //
-
-
-  // So it wont explode when user isnt loaded yet.
   if (loading) {
     return <div className="p-6 text-white">Loading profile...</div>
   }
