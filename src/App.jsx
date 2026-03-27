@@ -38,7 +38,7 @@ function App() {
 		<div className="app-shell min-h-screen">
 			{/* Centered column mimics a mobile device viewport. */}
 			<div className="mx-auto flex min-h-screen w-full max-w-[450px] flex-col px-4 pb-44 pt-8 md:px-6 md:pb-36">
-				<header className="hidden items-center justify-between md:flex">
+				<header className="flex items-center justify-between">
 					{/* Brand lockup + app picker for desktop screens. */}
 					<div className="flex items-center gap-3">
 						<div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#FF5A7A] text-white">
