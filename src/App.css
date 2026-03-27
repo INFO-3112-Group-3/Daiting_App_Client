@@ -1,4 +1,3 @@
-/* Legacy Vite demo styles kept for potential future marketing blocks. */
 .counter {
   font-size: 16px;
   padding: 5px 10px;
@@ -18,7 +17,6 @@
   }
 }
 
-/* Tilted hero assembly that showcases layered logos. */
 .hero {
   position: relative;
 
@@ -58,7 +56,6 @@
   }
 }
 
-/* Center column used on large screens when the hero is enabled. */
 #center {
   display: flex;
   flex-direction: column;
@@ -73,7 +70,6 @@
   }
 }
 
-/* Documentation CTA grid that appears under the hero. */
 #next-steps {
   display: flex;
   border-top: 1px solid var(--border);
@@ -99,7 +95,6 @@
   }
 }
 
-/* Left-hand column styling for the docs bucket. */
 #docs {
   border-right: 1px solid var(--border);
 
@@ -109,7 +104,6 @@
   }
 }
 
-/* Horizontal list for social-style buttons. */
 #next-steps ul {
   list-style: none;
   padding: 0;
@@ -159,7 +153,6 @@
   }
 }
 
-/* Simple spacer used to create breathing room at the bottom. */
 #spacer {
   height: 88px;
   border-top: 1px solid var(--border);
@@ -168,7 +161,6 @@
   }
 }
 
-/* Decorative ticks that bookend section headers. */
 .ticks {
   position: relative;
   width: 100%;
