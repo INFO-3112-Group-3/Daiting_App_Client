@@ -49,6 +49,18 @@ const users = {
         })
         return response;
     },
+    updateProfile: async (username, data) => {
+        const response = await fetch(
+            serverRoute(`api/users/${username}/profile`),
+            {
+                headers,
+                method: 'PUT',
+                body: JSON.stringify(data)
+            }
+        )
+
+        return response
+    }
 }
 
 export {

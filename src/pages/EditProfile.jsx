@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Button } from '../components/Button'
 import { InputField } from '../components/InputField'
 import { users } from '../utils/api'
+import TagInput from '../components/TagInput'
 
 export default function EditProfilePage({ user, updateUser }) {
   const navigate = useNavigate()
@@ -25,9 +26,9 @@ export default function EditProfilePage({ user, updateUser }) {
     notes: ''
   })
 
-  // Separate handler for multi skills field.
-  const [skillInput, setSkillInput] = useState('')
+  // Separate handler for multi skills/interests field.
   const [skills, setSkills] = useState([])
+  const [interests, setInterests] = useState([])
 
   // Load user info when props change.
   useEffect(() => {
@@ -50,6 +51,7 @@ export default function EditProfilePage({ user, updateUser }) {
       })
 
       setSkills(data.skills || [])
+      setInterests(data.interests || [])
 
       setLoading(false)
     }
@@ -70,15 +72,27 @@ export default function EditProfilePage({ user, updateUser }) {
 
     if (!fullUser) return
 
-    const { password, ...safeUser } = fullUser
-
-    const updatedUser = {
-      ...safeUser,
-      ...form,
-      skills: skills
+    const updatedProfile = {
+      firstName: form.firstName,
+      lastName: form.lastName,
+      gender: form.gender,
+      orientation: form.orientation,
+      city: form.city,
+      region: form.region,
+      occupation: form.occupation,
+      notes: form.notes,
+      skills,
+      interests
     }
 
-    await users.update(updatedUser)
+    const res = await users.updateProfile(fullUser.username, updatedProfile)
+
+    if (!res.ok) {
+      console.error(await res.text())
+      return
+    }
+
+    const updatedUser = await res.json()
     updateUser(updatedUser)
 
     navigate('/profile')
@@ -130,88 +144,6 @@ export default function EditProfilePage({ user, updateUser }) {
     )
   }
 
-  // Skills field functionality.
-
-  const addSkill = () => {
-    if (!skillInput.trim()) return
-
-    setSkills((prev) => [...prev, skillInput.trim()])
-    setSkillInput('')
-  }
-
-  const removeSkill = (index) => {
-    setSkills((prev) => prev.filter((_, i) => i !== index))
-  }
-
-  const handleSkillKeyDown = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      addSkill()
-    }
-  }
-
-  const renderSkillsField = () => {
-    return (
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-white">Skills:</span>
-
-          <button
-            type="button"
-            onClick={() => toggleEdit("skills")}
-            className="text-sm text-blue-400"
-          >
-            {editable.skills ? "Lock" : "Edit"}
-          </button>
-        </div>
-
-        {/* Input only enabled when editing */}
-        {editable.skills && (
-          <div className="flex gap-2">
-            <input
-              type="text"
-              value={skillInput}
-              onChange={(e) => setSkillInput(e.target.value)}
-              onKeyDown={handleSkillKeyDown}
-              placeholder="Add a skill"
-              className="flex-1 rounded bg-[#1B1B24] text-white px-3 py-2"
-            />
-
-            <button
-              type="button"
-              onClick={addSkill}
-              className="text-sm text-blue-400"
-            >
-              Add
-            </button>
-          </div>
-        )}
-
-        {/* Skill list */}
-        <div className="flex flex-wrap gap-2">
-          {skills.map((skill, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-2 bg-[#2A2A36] px-3 py-1 rounded-full text-white text-sm"
-            >
-              {skill}
-
-              {editable.skills && (
-                <button
-                  type="button"
-                  onClick={() => removeSkill(index)}
-                  className="text-red-400"
-                >
-                  X
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    )
-  }
-
   //////////////////////////////////////////////////////////////////////
   // Rendering....
   //
@@ -236,7 +168,21 @@ export default function EditProfilePage({ user, updateUser }) {
         {renderEditableField("city", "City", "City")}
         {renderEditableField("region", "Region", "Region")}
         {renderEditableField("occupation", "Occupation", "Occupation")}
-        {renderSkillsField()}
+        <TagInput
+          label="Skills"
+          values={skills}
+          setValues={setSkills}
+          editable={editable.skills}
+          toggleEdit={() => toggleEdit("skills")}
+        />
+
+        <TagInput
+          label="Interests"
+          values={interests}
+          setValues={setInterests}
+          editable={editable.interests}
+          toggleEdit={() => toggleEdit("interests")}
+        />
         {renderEditableField("notes", "Notes", "Notes")}
 
         <Button type="submit" variant="gradient">
