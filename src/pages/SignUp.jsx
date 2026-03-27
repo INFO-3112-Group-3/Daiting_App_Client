@@ -55,7 +55,18 @@ export default function SignUp() {
     user.Salutation = form.salutation;   
     //currently storing this inefficently... should change that
     user.Brithday = new Date(form.year,months.indexOf(form.month)-1,form.day,12,0,0);
-    console.log(user);
+    let response = await api.users.register(user);
+      //if its correct
+      if (response.ok)
+      {
+       navigate('/');
+      }
+      else
+      {
+        //STUB: once desgin has been finalized, lmk so I can add in this invalid message in a way that makes sense
+        const errorText = await response.text();
+        console.error(`Register failed: ${errorText}`);
+      }
     }
     
   return (

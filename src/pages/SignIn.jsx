@@ -22,7 +22,7 @@ export default function SignIn(props) {
 			//retrieve user from the response to then update the logined user
         	const user = await response.json();
 			props.updateUser(user);
-			console.log(user);
+
 			//change this to the profile
 			navigate('/profile')
 		}

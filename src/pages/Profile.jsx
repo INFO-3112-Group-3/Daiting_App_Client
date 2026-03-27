@@ -2,14 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import SkillPill from '../components/SkillPill'
 
 const starterSkills = ['React', 'TypeScript', 'AWS', 'Figma']
-const defaultProfile = {
-  name: 'Olivia Ellenpark',
-  age: '28',
-  role: 'Full Stack Engineer',
-  location: 'San Francisco, CA',
-  bio: 'Shipping resilient product, searching for a partner who understands the magic in clean architecture.',
-  avatar: '',
-}
 
 const profileStorageKey = 'find-it.profile'
 
@@ -21,17 +13,32 @@ export default function Profile() {
   const [saveStatus, setSaveStatus] = useState('')
 
   useEffect(() => {
-    const saved = localStorage.getItem(profileStorageKey)
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved)
-        setProfile((prev) => ({ ...prev, ...parsed }))
-        if (parsed.skills) setSkills(parsed.skills)
-      } catch {
-        setProfile(defaultProfile)
-      }
+    async function loadUser() {
+      if (!user?.email) return
+
+      const data = await users.getUserInformation(user.email)
+      console.log("FULL USER API RESPONSE:", data)
+      setFullUser(data)
+
+      setForm({
+        firstName: data.firstName || '',
+        lastName: data.lastName || '',
+        gender: data.gender || '',
+        orientation: data.orientation || '',
+        city: data.city || '',
+        region: data.region || '',
+        occupation: data.occupation || '',
+        notes: data.notes || ''
+      })
+
+      setSkills(data.skills || [])
+      setInterests(data.interests || [])
+
+      setLoading(false)
     }
-  }, [])
+
+    loadUser()
+  }, [user])
 
   const addSkill = (event) => {
     event.preventDefault()
