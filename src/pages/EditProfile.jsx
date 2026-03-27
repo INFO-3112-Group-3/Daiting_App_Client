@@ -15,7 +15,12 @@ export default function EditProfilePage({ user, updateUser }) {
   const [form, setForm] = useState({
     firstName: '',
     lastName: '',
-    bio: ''
+    gender: '',
+    orientation: '',
+    city: '',
+    region: '',
+    occupation: '',
+    notes: ''
   })
 
   useEffect(() => {
@@ -29,7 +34,12 @@ export default function EditProfilePage({ user, updateUser }) {
       setForm({
         firstName: data.firstName || '',
         lastName: data.lastName || '',
-        bio: data.bio || ''
+        gender: data.gender || '',
+        orientation: data.orientation || '',
+        city: data.city || '',
+        region: data.region || '',
+        occupation: data.occupation || '',
+        notes: data.notes || ''
       })
 
       setLoading(false)
@@ -85,10 +95,45 @@ export default function EditProfilePage({ user, updateUser }) {
         />
 
         <InputField
-          name="bio"
-          value={form.bio}
+          name="gender"
+          value={form.gender}
           onChange={handleChange}
-          placeholder="Bio"
+          placeholder="Gender"
+        />
+
+        <InputField
+          name="orientation"
+          value={form.orientation}
+          onChange={handleChange}
+          placeholder="Orientation"
+        />       
+
+        <InputField
+          name="city"
+          value={form.city}
+          onChange={handleChange}
+          placeholder="City"
+        />
+
+        <InputField
+          name="region"
+          value={form.region}
+          onChange={handleChange}
+          placeholder="Region"
+        />
+
+        <InputField
+          name="occupation"
+          value={form.occupation}
+          onChange={handleChange}
+          placeholder="Occupation"
+        />
+
+        <InputField
+          name="notes"  
+          value={form.notes}
+          onChange={handleChange}
+          placeholder="Notes"
         />
 
         <Button type="submit" variant="gradient">
