@@ -1,3 +1,7 @@
+const API_IP = 'http://localhost';
+const API_PORT = 5129;
+
+
 const headers = {
     // https://www.rfc-editor.org/rfc/rfc7231#section-5.3.2
     // https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Accept
@@ -11,8 +15,8 @@ const serverRoute = (route) => `${API_IP}:${API_PORT}/${route}`;
 
 
 const users = {
-    getUserInformation: async (userName) => {
-        let response = await fetch (serverRoute(`api/users/email/${userName}`), {
+    getUserInformation: async (id) => {
+        let response = await fetch (serverRoute(`api/users/${id}`), {
             headers,
             method: 'GET'   
         });

@@ -5,40 +5,26 @@ const starterSkills = ['React', 'TypeScript', 'AWS', 'Figma']
 
 const profileStorageKey = 'find-it.profile'
 
-export default function Profile() {
+export default function Profile(props) {
   const fileInputRef = useRef(null)
-  const [profile, setProfile] = useState(defaultProfile)
+  const [profile, setProfile] = useState(structuredClone(props.user))
   const [skills, setSkills] = useState(starterSkills)
   const [skillInput, setSkillInput] = useState('')
   const [saveStatus, setSaveStatus] = useState('')
+  const [form,setForm] = useState();
 
   useEffect(() => {
-    async function loadUser() {
-      if (!user?.email) return
-
-      const data = await users.getUserInformation(user.email)
-      console.log("FULL USER API RESPONSE:", data)
-      setFullUser(data)
-
-      setForm({
-        firstName: data.firstName || '',
-        lastName: data.lastName || '',
-        gender: data.gender || '',
-        orientation: data.orientation || '',
-        city: data.city || '',
-        region: data.region || '',
-        occupation: data.occupation || '',
-        notes: data.notes || ''
-      })
-
-      setSkills(data.skills || [])
-      setInterests(data.interests || [])
-
-      setLoading(false)
+    if (props.user)
+    {
+      console.log(props.user);
+      setProfile(structuredClone(props.user));
     }
-
-    loadUser()
-  }, [user])
+    setForm({
+        Firstname: profile.firstName || '',
+        Lastname: profile.lastName || '',
+        Gender: profile.gender || '',
+      });
+  }, [props.user])
 
   const addSkill = (event) => {
     event.preventDefault()
@@ -57,22 +43,14 @@ export default function Profile() {
   }
 
   const handleAvatarChange = (event) => {
-    const file = event.target.files?.[0]
-    if (!file) return
-    const reader = new FileReader()
-    reader.onload = () => {
-      if (typeof reader.result === 'string') {
-        setProfile((prev) => ({ ...prev, avatar: reader.result }))
-      }
-    }
-    reader.readAsDataURL(file)
+   
   }
 
   const handleSave = () => {
-    const payload = { ...profile, skills }
-    localStorage.setItem(profileStorageKey, JSON.stringify(payload))
-    setSaveStatus('Saved')
-    setTimeout(() => setSaveStatus(''), 1500)
+    //api call to update the user
+    
+    props.updateUser(profile);
+
   }
 
   return (
@@ -80,9 +58,9 @@ export default function Profile() {
       <div className="flex w-full flex-col gap-6 lg:max-w-sm">
         <div className="soft-card flex flex-col items-center gap-4 p-8">
           <div className="h-28 w-28 overflow-hidden rounded-full border border-amber-300/40 bg-gradient-to-br from-amber-300/40 via-zinc-900 to-black">
-            {profile.avatar ? (
-              <img src={profile.avatar} alt="Profile avatar" className="h-full w-full object-cover" />
-            ) : null}
+            {/*profile.avatar ? (
+               <img src={profile.avatar} alt="Profile avatar" className="h-full w-full object-cover" />
+            ) : */ null}
           </div>
           <input
             ref={fileInputRef}
@@ -102,12 +80,12 @@ export default function Profile() {
         </div>
         <div className="soft-card p-6">
           <p className="label">Profile Snapshot</p>
-          <h3 className="mt-4 text-xl font-semibold text-white">{profile.name}</h3>
+          <h3 className="mt-4 text-xl font-semibold text-white">{profile.salutation} {profile.firstName} {profile.lastName}</h3>
           <p className="mt-1 text-sm text-zinc-400">
-            {profile.age} • {profile.role}
+            {profile.age}
           </p>
-          <p className="mt-2 text-xs text-zinc-500">{profile.location}</p>
-          <p className="mt-4 text-sm text-zinc-300">{profile.bio}</p>
+          {/*<p className="mt-2 text-xs text-zinc-500">{profile.location}</p>
+          <p className="mt-4 text-sm text-zinc-300">{profile.bio}</p> */}
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-zinc-400">
             {skills.map((skill) => (
               <span
@@ -124,36 +102,19 @@ export default function Profile() {
         <div className="grid gap-6">
           <div>
             <p className="label mb-2">Salutation</p>
-            <input className="input" value={profile.firstname} onChange={handleProfileChange('name')} />
+            <input className="input" value={profile.salutation} onChange={handleProfileChange('salutation')} />
           </div>
           <div>
             <p className="label mb-2">First Name</p>
-            <input className="input" value={profile.firstname} onChange={handleProfileChange('name')} />
+            <input className="input" value={profile.firstName} onChange={handleProfileChange('Firstname')} />
           </div>
           <div>
             <p className="label mb-2">Last Name</p>
-            <input className="input" value={profile.lastname} onChange={handleProfileChange('name')} />
+            <input className="input" value={profile.lastName} onChange={handleProfileChange('Lastname')} />
           </div>
           <div>
             <p className="label mb-2">Age</p>
-            <input className="input" value={profile.age} onChange={handleProfileChange('age')} />
-          </div>
-          <div>
-            <p className="label mb-2">Role</p>
-            <input className="input" value={profile.role} onChange={handleProfileChange('role')} />
-          </div>
-          <div>
-            <p className="label mb-2">Location</p>
-            <input className="input" value={profile.location} onChange={handleProfileChange('location')} />
-          </div>
-          <div>
-            <p className="label mb-2">Bio</p>
-            <textarea
-              rows={4}
-              className="input"
-              value={profile.bio}
-              onChange={handleProfileChange('bio')}
-            />
+            <input className="input" value={profile.age} onChange={handleProfileChange('Age')} />
           </div>
           <div>
             <p className="label mb-2">Skill Stack</p>

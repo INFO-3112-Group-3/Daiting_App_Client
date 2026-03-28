@@ -8,13 +8,15 @@ import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
 import SimplePage from './pages/SimplePage'
 import {useState} from "react"
+import * as api from "../src/utils/api"
 export default function App() {
  
  let [user,setUser] = useState();
  
   
  const updateUser = (currentUser) => {
-    setUser(currentUser);
+
+    setUser(currentUser.user);
  }
   return (
     <div className="min-h-screen bg-ink text-white">
@@ -26,7 +28,7 @@ export default function App() {
             <Route path="/signup" element={<SignUp />} />
             <Route path="/signin" element={<SignIn updateUser={updateUser}/>} />
             <Route path="/discover" element={<Discover />} />
-            <Route path="/profile" element={<Profile user={currentUser}/>} />
+            <Route path="/profile" element={<Profile user={user} updateUser={updateUser}/>} />
             <Route
               path="/about"
               element={
