@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import SkillPill from '../components/SkillPill'
-
+import * as api from "../utils/api";
 const starterSkills = ['React', 'TypeScript', 'AWS', 'Figma']
 
 const profileStorageKey = 'find-it.profile'
@@ -26,6 +26,11 @@ export default function Profile(props) {
       });
   }, [props.user])
 
+  useEffect(()=> {
+      loadSkills();
+  },[])
+
+
   const addSkill = (event) => {
     event.preventDefault()
     const trimmed = skillInput.trim()
@@ -46,10 +51,17 @@ export default function Profile(props) {
    
   }
 
-  const handleSave = () => {
+  const handleSave = async () => {
     //api call to update the user
-    
-    props.updateUser(profile);
+    let response = await api.users.updateUser(profile);
+    if (response.ok)
+    {
+      props.updateUser(profile);
+    }
+    else
+    {
+      //error handling code... idk what to do lol
+    }
 
   }
 

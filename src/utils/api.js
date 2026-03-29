@@ -40,13 +40,22 @@ const users = {
         return response;
     },
     update: async(user) => {
-        let response = await fetch(serverRoute("api/users/" +user.Username), {
+        let response = await fetch(serverRoute("api/users/" +user.isd), {
             headers,
             method: 'PUT',
             body: JSON.stringify(user)
         })
         return response;
     },
+}
+const skills = {
+    getSkills: async () => {
+        let response = await fetch(serverRoute("api/skills"), {
+            headers,
+            method: 'GET'
+        })
+        return response;
+    }
 }
 
 export {
