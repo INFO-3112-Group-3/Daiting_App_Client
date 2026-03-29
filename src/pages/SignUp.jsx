@@ -1,7 +1,7 @@
-import { Link } from 'react-router-dom'
+import { Link , useNavigate} from 'react-router-dom'
 import {useState} from 'react'
 import { InputField } from '../components/InputField'
-
+import * as api from "../utils/api"
 const months = [
   'January',
   'February',
@@ -21,6 +21,7 @@ export default function SignUp() {
 
     // Local form + preference state for the demo experience.
     const [form, setForm] = useState([]);
+     const navigate = useNavigate();
     const [otherSelected, setOtherSelected] = useState(false);
     //const [selectedPrefs, setSelectedPrefs] = useState(new Set(preferenceOptions))
   

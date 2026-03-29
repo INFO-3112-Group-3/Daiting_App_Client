@@ -40,7 +40,7 @@ const users = {
         return response;
     },
     update: async(user) => {
-        let response = await fetch(serverRoute("api/users/" +user.isd), {
+        let response = await fetch(serverRoute("api/users/" + user.id), {
             headers,
             method: 'PUT',
             body: JSON.stringify(user)

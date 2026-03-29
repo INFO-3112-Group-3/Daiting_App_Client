@@ -27,7 +27,17 @@ export default function Profile(props) {
   }, [props.user])
 
   useEffect(()=> {
-      loadSkills();
+    if (props.user)
+    {
+      console.log(props.user);
+      setProfile(structuredClone(props.user));
+    }
+    setForm({
+        Firstname: profile.firstName || '',
+        Lastname: profile.lastName || '',
+        Gender: profile.gender || '',
+      });
+      //loadSkills();
   },[])
 
 
@@ -53,7 +63,7 @@ export default function Profile(props) {
 
   const handleSave = async () => {
     //api call to update the user
-    let response = await api.users.updateUser(profile);
+    let response = await api.users.update(profile);
     if (response.ok)
     {
       props.updateUser(profile);
@@ -118,15 +128,15 @@ export default function Profile(props) {
           </div>
           <div>
             <p className="label mb-2">First Name</p>
-            <input className="input" value={profile.firstName} onChange={handleProfileChange('Firstname')} />
+            <input className="input" value={profile.firstName} onChange={handleProfileChange('firstName')} />
           </div>
           <div>
             <p className="label mb-2">Last Name</p>
-            <input className="input" value={profile.lastName} onChange={handleProfileChange('Lastname')} />
+            <input className="input" value={profile.lastName} onChange={handleProfileChange('lastName')} />
           </div>
           <div>
             <p className="label mb-2">Age</p>
-            <input className="input" value={profile.age} onChange={handleProfileChange('Age')} />
+            <input className="input" value={profile.age} onChange={handleProfileChange('age')} />
           </div>
           <div>
             <p className="label mb-2">Skill Stack</p>
