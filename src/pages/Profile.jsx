@@ -8,45 +8,30 @@ const profileStorageKey = 'find-it.profile'
 export default function Profile(props) {
   const fileInputRef = useRef(null)
   const [profile, setProfile] = useState(structuredClone(props.user))
-  const [skills, setSkills] = useState(starterSkills)
-  const [skillInput, setSkillInput] = useState('')
+  const [allSkills, setAllSkills] = useState([]);
+  const [skills, setSkills] = useState(starterSkills);
+  const [skillInput, setSkillInput] = useState("")
   const [saveStatus, setSaveStatus] = useState('')
   const [form,setForm] = useState();
 
   useEffect(() => {
     if (props.user)
     {
-      console.log(props.user);
       setProfile(structuredClone(props.user));
     }
-    setForm({
-        Firstname: profile.firstName || '',
-        Lastname: profile.lastName || '',
-        Gender: profile.gender || '',
-      });
   }, [props.user])
 
   useEffect(()=> {
-    if (props.user)
-    {
-      console.log(props.user);
-      setProfile(structuredClone(props.user));
-    }
-    setForm({
-        Firstname: profile.firstName || '',
-        Lastname: profile.lastName || '',
-        Gender: profile.gender || '',
-      });
-      //loadSkills();
+      loadSkills();
   },[])
 
-
+const loadSkills = async () =>{
+    let response = await api.skills.getSkills();
+      setAllSkills(response);
+}
   const addSkill = (event) => {
     event.preventDefault()
-    const trimmed = skillInput.trim()
-    if (!trimmed || skills.includes(trimmed)) return
-    setSkills((prev) => [...prev, trimmed])
-    setSkillInput('')
+    setSkills((prev) => [...prev, skillInput])
   }
 
   const removeSkill = (skill) => {
@@ -63,6 +48,7 @@ export default function Profile(props) {
 
   const handleSave = async () => {
     //api call to update the user
+    setProfile((prev) => ({ ...prev, [Skills]: skills }));
     let response = await api.users.update(profile);
     if (response.ok)
     {
@@ -109,14 +95,15 @@ export default function Profile(props) {
           {/*<p className="mt-2 text-xs text-zinc-500">{profile.location}</p>
           <p className="mt-4 text-sm text-zinc-300">{profile.bio}</p> */}
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-zinc-400">
-            {skills.map((skill) => (
+            {skills.map((skill) => {
+              return (
               <span
                 key={skill}
                 className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1"
               >
                 {skill}
-              </span>
-            ))}
+              </span> )
+            })}
           </div>
         </div>
       </div>
@@ -141,12 +128,13 @@ export default function Profile(props) {
           <div>
             <p className="label mb-2">Skill Stack</p>
             <form onSubmit={addSkill} className="flex flex-col gap-3 sm:flex-row">
-              <input
-                className="input flex-1"
-                placeholder="Type a skill and press enter"
-                value={skillInput}
-                onChange={(event) => setSkillInput(event.target.value)}
-              />
+              <select name ="day" className="input"
+              value={skillInput}
+              onChange={(e) => setSkillInput(e.target.value)}>
+                {Array.from(allSkills).map((skill) => {
+                  return <option  key={skill.id} value={skill.name}>{skill.name}</option>
+                  })}
+              </select>
               <button
                 type="submit"
                 className="rounded-2xl border border-amber-300/60 bg-amber-300/15 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"

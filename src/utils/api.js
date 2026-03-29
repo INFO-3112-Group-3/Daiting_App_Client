@@ -53,11 +53,13 @@ const skills = {
         let response = await fetch(serverRoute("api/skills"), {
             headers,
             method: 'GET'
-        })
-        return response;
+        });
+        let data = await response.json();
+        return data;
     }
 }
 
 export {
-    users
+    users,
+    skills
 }
