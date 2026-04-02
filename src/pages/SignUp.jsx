@@ -56,7 +56,7 @@ export default function SignUp() {
     user.Lastname = form.lastname;
     user.ContactInfo = form.contactinfo;
     user.ContactMethod = form.contactmethod;
-    user.Birthday = new Date(form.year,months.indexOf(form.month),form.day).toISOString(); 
+    user.DateOfBirth = new Date(form.year,months.indexOf(form.month),form.day).toISOString().split('T')[0]; 
     let response = await api.users.register(user);
       //if its correct
       if (response.ok)

@@ -1,5 +1,5 @@
-const API_IP = 'http://localhost';
-const API_PORT = 5129;
+const API_IP = 'https://localhost';
+const API_PORT = 7195;
 
 
 const headers = {
