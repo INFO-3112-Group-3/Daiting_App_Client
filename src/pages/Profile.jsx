@@ -9,7 +9,7 @@ export default function Profile(props) {
   const fileInputRef = useRef(null)
   const [profile, setProfile] = useState(structuredClone(props.user))
   const [allSkills, setAllSkills] = useState([]);
-  const [skills, setSkills] = useState(starterSkills);
+  const [skills, setSkills] = useState([]);
   const [skillInput, setSkillInput] = useState("")
   const [saveStatus, setSaveStatus] = useState('')
   const [form,setForm] = useState();
@@ -30,8 +30,9 @@ const loadSkills = async () =>{
       setAllSkills(response);
 }
   const addSkill = (event) => {
-    event.preventDefault()
-    setSkills((prev) => [...prev, skillInput])
+    event.preventDefault();
+    setSkills((prev) => [...prev, skillInput]);
+    setProfile((prev) => ({ ...prev, [skills]: skills }));
   }
 
   const removeSkill = (skill) => {
@@ -48,7 +49,6 @@ const loadSkills = async () =>{
 
   const handleSave = async () => {
     //api call to update the user
-    setProfile((prev) => ({ ...prev, [Skills]: skills }));
     let response = await api.users.update(profile);
     if (response.ok)
     {
@@ -122,6 +122,10 @@ const loadSkills = async () =>{
             <input className="input" value={profile.lastName} onChange={handleProfileChange('lastName')} />
           </div>
           <div>
+            <p className="label mb-2">Nickname</p>
+            <input className="input" value={profile.nickName} onChange={handleProfileChange('nickName')} />
+          </div>
+          <div>
             <p className="label mb-2">Age</p>
             <input className="input" value={profile.age} onChange={handleProfileChange('age')} />
           </div>
@@ -138,6 +142,7 @@ const loadSkills = async () =>{
               <button
                 type="submit"
                 className="rounded-2xl border border-amber-300/60 bg-amber-300/15 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
+                
               >
                 Add Skill
               </button>
