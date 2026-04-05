@@ -6,29 +6,40 @@ import Landing from './pages/Landing'
 import Profile from './pages/Profile'
 import SignIn from './pages/SignIn'
 import SignUp from './pages/SignUp'
+import MatchesPage from './pages/matches'
 import SimplePage from './pages/SimplePage'
-import {useState} from "react"
+import { useState } from "react"
 import * as api from "../src/utils/api"
-export default function App() {
- 
- let [user,setUser] = useState();
- 
-  
- const updateUser = (currentUser) => {
+import EditProfilePage from './pages/EditProfile'
 
-    setUser(currentUser.user);
- }
+
+export default function App() {
+  // Currently logged in user state. If null, no user is logged in.
+  // Currently used by:
+  // - NavBar: To conditionally render the navbar links.
+  // - Profile: To display the user's profile information and allow editing.
+  const [user, setUser] = useState(null);
+
+  // Callback that will be sent to the login component to update current user state.
+  const updateUser = ((currentUser) => {
+    console.log(currentUser);
+    setUser({ ...currentUser });
+  });
+
+
   return (
     <div className="min-h-screen bg-ink text-white">
       <div className="min-h-screen bg-hero-radial">
-        <NavBar />
+        {/* See "components/NavBar" for the items which are displayed based on user logged in status */}
+        <NavBar user={user} />
         <main>
           <Routes>
-            <Route path="/" element={<Landing />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/signin" element={<SignIn updateUser={updateUser}/>} />
-            <Route path="/discover" element={<Discover />} />
-            <Route path="/profile" element={<Profile user={user} updateUser={updateUser}/>} />
+            <Route path="/" element={<Landing />} />                              {/* Main page which shows up by default */}
+            <Route path="/signup" element={<SignUp />} />                         {/* Signup page */}
+            <Route path="/signin" element={<SignIn updateUser={updateUser} />} /> {/* Signin page, button on the top right of navbar. */}
+            <Route path="/matches" element={<MatchesPage />} />                   {/* Matches page, shows all the user's matches. */}
+            <Route path="/discover" element={<Discover />} />                     {/* Discover page, shows potential matches based on swiping algorithm. */}
+            <Route path="/profile" element={<Profile user={user} updateUser={updateUser} />} /> {/* User's profile to edit their information */}
             <Route
               path="/about"
               element={
