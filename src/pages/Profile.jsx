@@ -1,74 +1,338 @@
 import { useEffect, useRef, useState } from 'react'
+import { Button } from '../components/Button';
 import SkillPill from '../components/SkillPill'
+import { InputField } from '../components/InputField';
 import * as api from "../utils/api";
-const starterSkills = ['React', 'TypeScript', 'AWS', 'Figma']
 
-const profileStorageKey = 'find-it.profile'
+// ??????????????????????? not sure of purpose
+// const starterSkills = ['React', 'TypeScript', 'AWS', 'Figma']
+// const profileStorageKey = 'find-it.profile'
 
 export default function Profile(props) {
-  const fileInputRef = useRef(null)
-  const [profile, setProfile] = useState(structuredClone(props.user))
-  const [allSkills, setAllSkills] = useState([]);
-  const [skills, setSkills] = useState([]);
-  const [skillInput, setSkillInput] = useState("")
+  //////////////////////////////////////////////////////////////////////
+  // States....
+  //  - 'isDataLoading' : while fetching user data from server.
+  //
+  //  - 'fullUser': to store complete user data from server.
+  //        NOTE: right now props props.user does not contain the user info, ITS IN props.user.user.
+  //              Yeah idk why...
+  //
+  //  - 'inputFormData' :
+  //      form state for editable fields.
+  //      Declared in the same order as the JSON object excluding the 'id' field.
+  //
+  //  - 'isFormFieldEditable' : to control which fields are currently editable.
+  //
+  //  - 'saveStatus' :
+  //        to display status message after saving changes. When empty string, no message is displayed.
+  //        Set to "Success" or "Failed" based on save result inside 'handleFormSubmission'.
+  //////////////////////////////////////////////////////////////////////
+  const [isDataLoading, setisDataLoading] = useState(true)
+  const [fullUser, setFullUser] = useState(null)
+  const [inputFormData, setInputFormData] = useState({
+    nickname: '',
+    email: '',
+    firstName: '',
+    lastName: '',
+    isPaidUser: false,
+    contactInfo: '',
+    contactMethod: '',
+    gender: '',
+    city: '',
+    region: '',
+    dateOfBirth: '',
+    interests: [],
+    skills: [],
+    preferences: []
+  })
+  const [isFormFieldEditable, setIsFormFieldEditable] = useState({
+    nickname: false,
+    email: false,
+    firstName: false,
+    lastName: false,
+    isPaidUser: false,
+    contactInfo: false,
+    contactMethod: false,
+    gender: false,
+    city: false,
+    region: false,
+    dateOfBirth: false,
+    interests: false,
+    skills: false,
+    preferences: false
+  })
   const [saveStatus, setSaveStatus] = useState('')
-  const [form,setForm] = useState();
+
+  const [allSkillOptions, setAllSkillOptions] = useState([]);   // All skill options from the server for the skills field.
+  const [userSkills, setUserSkills] = useState([]);       // User's current skills for the skills field.
+  const [skillInput, setSkillInput] = useState("")        // Controlled input state for adding skills.
+  // const [skillInput, setSkillInput] = useState("")
+
+  //////////////////////////////////////////
+  // Unknown.....
+  //////////////////////////////////////////
+
+  // const fileInputRef = useRef(null)
+  // const [profile, setProfile] = useState(structuredClone(props.user))
+  // const [form, setForm] = useState();
+
+  //////////////////////////////////////////////////////////////////////
+  // Functionality....
+  //  - 'UseEffect.loadUser' :
+  //      Load user data from server when component mounts or when 'props.user' changes.
+  //
+  //  - 'handleInputFormChanges' :
+  //      Update input form state on change for controlled inputs.
+  //
+  //  - 'toggleFormFieldEditable' :
+  //      Toggles the 'editable' state for the given field key.
+  //
+  //  - 'handleFormSubmission' :
+  //      Called when the user clicks the "Save Changes" button.
+  //      Sends updated profile data to server, updates app state and reloads profile data.
+  //////////////////////////////////////////////////////////////////////
 
   useEffect(() => {
-    if (props.user)
-    {
-      setProfile(structuredClone(props.user));
+    async function loadUser() {
+      if (!props.user) {
+        console.warn("No user in props, cannot load profile data.")
+        return;
+      }
+
+      // Yeah idk why its stored like this.....
+      if (!props.user.user) {
+        console.warn("Invalid user data, cannot load profile data.")
+        return;
+      }
+
+      const data = await api.users.getUserInformation(props.user.user.id);
+      setFullUser(data)
+
+      // Validated all user data and console log for debugging if they are not present.
+      if (!data.nickname) console.warn("User data missing 'nickname' field.")
+      if (!data.email) console.warn("User data missing 'email' field.")
+      if (!data.firstName) console.warn("User data missing 'firstName' field.")
+      if (!data.lastName) console.warn("User data missing 'lastName' field.")
+      if (data.isPaidUser === undefined) console.warn("User data missing 'isPaidUser' field.")
+      if (!data.contactInfo) console.warn("User data missing 'contactInfo' field.")
+      if (!data.contactMethod) console.warn("User data missing 'contactMethod' field")
+      if (!data.gender) console.warn("User data missing 'gender' field.")
+      if (!data.city) console.warn("User data missing 'city' field.")
+      if (!data.region) console.warn("User data missing 'region' field.")
+      if (!data.dateOfBirth) console.warn("User data missing 'dateOfBirth' field.")
+      if (!data.interests) console.warn("User data missing 'interests' field.")
+      if (!data.skills) console.warn("User data missing 'skills' field.")
+      if (!data.preferences) console.warn("User data missing 'preferences' field.")
+
+
+      setInputFormData({
+        nickname: data.nickname || '',
+        email: data.email || '',
+        firstName: data.firstName || '',
+        lastName: data.lastName || '',
+        isPaidUser: data.isPaidUser || false,
+        contactInfo: data.contactInfo || '',
+        contactMethod: data.contactMethod || '',
+        gender: data.gender || '',
+        city: data.city || '',
+        region: data.region || '',
+        dateOfBirth: data.dateOfBirth || '',
+        interests: data.interests || [],
+        skills: data.skills || [],
+        preferences: data.preferences || []
+      })
+
+      setisDataLoading(false)
     }
+
+    loadUser()
   }, [props.user])
 
-  useEffect(()=> {
-      loadSkills();
-  },[])
+  const handleInputFormChanges = ({ target }) => {
+    setInputFormData((prev) => ({
+      ...prev,
+      [target.name]: target.value
+    }))
+  }
 
-const loadSkills = async () =>{
+  const toggleFormFieldEditable = (field) => {
+    if (field === "email") {
+      alert("Email cannot be edited.")
+      return;
+    }
+
+    setIsFormFieldEditable((prev) => ({
+      ...prev,
+      [field]: !prev[field]
+    }))
+  }
+
+  // Undocumented atm...
+
+  const handleFormSubmission = async (e) => {
+    e.preventDefault()
+
+    if (!fullUser) return
+
+    const updatedProfile = {
+      ...fullUser,
+      nickname: inputFormData.nickname,
+      email: inputFormData.email,
+      firstName: inputFormData.firstName,
+      lastName: inputFormData.lastName,
+      isPaidUser: inputFormData.isPaidUser,
+      contactInfo: inputFormData.contactInfo,
+      contactMethod: inputFormData.contactMethod,
+      gender: inputFormData.gender,
+      city: inputFormData.city,
+      region: inputFormData.region,
+      dateOfBirth: inputFormData.dateOfBirth,
+      interests: inputFormData.interests,
+      skills: inputFormData.skills,
+      preferences: inputFormData.preferences
+    }
+
+    const res = await api.users.update(updatedProfile)
+
+    if (!res.ok) {
+      console.error(await res.text())
+      setSaveStatus("Failed")
+      return
+    }
+
+    const updatedUser = await api.users.getUserInformation(props.user.user.id);
+    setFullUser(updatedUser)
+    props.updateUser({ ...props.user, user: updatedUser });
+    setSaveStatus("Success")
+
+    // Reset all fields to non-editable after saving.
+    setIsFormFieldEditable({
+      nickname: false,
+      email: false,
+      firstName: false,
+      lastName: false,
+      isPaidUser: false,
+      contactInfo: false,
+      contactMethod: false,
+      gender: false,
+      city: false,
+      region: false,
+      dateOfBirth: false,
+      interests: false,
+      skills: false,
+      preferences: false
+    })
+  }
+
+  const loadSkills = async () => {
     let response = await api.skills.getSkills();
-      setAllSkills(response);
-}
+    setAllSkillOptions(response);
+  }
+
   const addSkill = (event) => {
     event.preventDefault();
-    setSkills((prev) => [...prev, skillInput]);
-    setProfile((prev) => ({ ...prev, [skills]: skills }));
+
+    // Only add skill if it's not already in the user's skills and is a valid skill option.
+    if (skillInput && !userSkills.includes(skillInput) && allSkillOptions.some(option => option.name === skillInput)) {
+      setUserSkills((prev) => [...prev, skillInput]);
+      setInputFormData((prev) => ({ ...prev, [userSkills]: userSkills }));
+    } else{
+      alert("Please select a valid skill that is not already added.")
+    }
   }
 
   const removeSkill = (skill) => {
-    setSkills((prev) => prev.filter((item) => item !== skill))
+    setUserSkills((prev) => prev.filter((item) => item !== skill))
   }
 
-  const handleProfileChange = (field) => (event) => {
-    setProfile((prev) => ({ ...prev, [field]: event.target.value }))
+  useEffect(() => {
+    loadSkills();
+  }, [])
+
+  //////////////////////////////////////////
+  // Unknown.....
+  //////////////////////////////////////////
+
+  // const handleAvatarChange = (event) => {
+
+  // }
+
+  //////////////////////////////////////////////////////////////////////
+  // Rendering....
+  //  - Dont display page based on isDataLoading state while fetching user data.  (No null errors!)
+  //  - renderEditableTextField : Renders editable text fields.
+  //  - Save button at the end to submit changes wired to 'handleFormSubmission' function.
+  //
+  //  - TODO: Interests field
+  //  - TODO: Date of Birth field
+  //////////////////////////////////////////////////////////////////////
+  const renderEditableTextField = (fieldKey, label, placeholder) => {
+    return (
+      <div>
+        <div className="flex items-center justify-between mb-2">
+          <p className="label">{label}</p>
+          <button
+            type="button"
+            onClick={() => toggleFormFieldEditable(fieldKey)}
+            className="text-sm text-blue-400"
+          >
+            {isFormFieldEditable[fieldKey] ? "Lock" : "Edit"}
+          </button>
+        </div>
+        <input
+          className="input"
+          name={fieldKey}
+          value={inputFormData[fieldKey] || ''}
+          onChange={handleInputFormChanges}
+          placeholder={placeholder}
+          disabled={!isFormFieldEditable[fieldKey]}
+        />
+      </div>
+    );
   }
 
-  const handleAvatarChange = (event) => {
-   
+  const renderEditableSkillsField = () => {
+    return (
+      <div>
+        <p className="label mb-2">Skill Stack</p>
+        <form onSubmit={addSkill} className="flex flex-col gap-3 sm:flex-row">
+          <select name="day" className="input"
+            value={skillInput}
+            onChange={(e) => setSkillInput(e.target.value)}>
+            {Array.from(allSkillOptions).map((skill) => {
+              return <option key={skill.id} value={skill.name}>{skill.name}</option>
+            })}
+          </select>
+          <button
+            type="submit"
+            className="rounded-2xl border border-amber-300/60 bg-amber-300/15 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
+
+          >
+            Add Skill
+          </button>
+        </form>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {userSkills.map((skill) => (
+            <SkillPill key={skill} label={skill} onRemove={() => removeSkill(skill)} />
+          ))}
+        </div>
+      </div>)
   }
 
-  const handleSave = async () => {
-    //api call to update the user
-    let response = await api.users.update(profile);
-    if (response.ok)
-    {
-      props.updateUser(profile);
-    }
-    else
-    {
-      //error handling code... idk what to do lol
-    }
-
+  if (isDataLoading) {
+    return <div className="p-6 text-white">Loading profile...</div>
   }
+
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-16 lg:flex-row">
-      <div className="flex w-full flex-col gap-6 lg:max-w-sm">
+      <div className="soft-card w-full p-8">
+{/*               <div className="flex w-full flex-col gap-6 lg:max-w-sm">
         <div className="soft-card flex flex-col items-center gap-4 p-8">
           <div className="h-28 w-28 overflow-hidden rounded-full border border-amber-300/40 bg-gradient-to-br from-amber-300/40 via-zinc-900 to-black">
-            {/*profile.avatar ? (
+            {profile.avatar ? (
                <img src={profile.avatar} alt="Profile avatar" className="h-full w-full object-cover" />
-            ) : */ null}
+            ) :  null}
           </div>
           <input
             ref={fileInputRef}
@@ -88,77 +352,46 @@ const loadSkills = async () =>{
         </div>
         <div className="soft-card p-6">
           <p className="label">Profile Snapshot</p>
-          <h3 className="mt-4 text-xl font-semibold text-white">{profile.salutation} {profile.firstName} {profile.lastName}</h3>
+          <h3 className="mt-4 text-xl font-semibold text-white">
+
+          </h3>
           <p className="mt-1 text-sm text-zinc-400">
             {profile.age}
           </p>
-          {/*<p className="mt-2 text-xs text-zinc-500">{profile.location}</p>
-          <p className="mt-4 text-sm text-zinc-300">{profile.bio}</p> */}
+          {<p className="mt-2 text-xs text-zinc-500">{profile.location}</p>
+          <p className="mt-4 text-sm text-zinc-300">{profile.bio}</p> }
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-zinc-400">
             {skills.map((skill) => {
               return (
-              <span
-                key={skill}
-                className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1"
-              >
-                {skill}
-              </span> )
+                <span
+                  key={skill}
+                  className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1"
+                >
+                  {skill}
+                </span>)
             })}
           </div>
         </div>
-      </div>
-      <div className="soft-card w-full p-8">
+      </div> */}
         <div className="grid gap-6">
-          <div>
-            <p className="label mb-2">Salutation</p>
-            <input className="input" value={profile.salutation} onChange={handleProfileChange('salutation')} />
-          </div>
-          <div>
-            <p className="label mb-2">First Name</p>
-            <input className="input" value={profile.firstName} onChange={handleProfileChange('firstName')} />
-          </div>
-          <div>
-            <p className="label mb-2">Last Name</p>
-            <input className="input" value={profile.lastName} onChange={handleProfileChange('lastName')} />
-          </div>
-          <div>
-            <p className="label mb-2">Nickname</p>
-            <input className="input" value={profile.nickName} onChange={handleProfileChange('nickName')} />
-          </div>
-          <div>
-            <p className="label mb-2">Age</p>
-            <input className="input" value={profile.age} onChange={handleProfileChange('age')} />
-          </div>
-          <div>
-            <p className="label mb-2">Skill Stack</p>
-            <form onSubmit={addSkill} className="flex flex-col gap-3 sm:flex-row">
-              <select name ="day" className="input"
-              value={skillInput}
-              onChange={(e) => setSkillInput(e.target.value)}>
-                {Array.from(allSkills).map((skill) => {
-                  return <option  key={skill.id} value={skill.name}>{skill.name}</option>
-                  })}
-              </select>
-              <button
-                type="submit"
-                className="rounded-2xl border border-amber-300/60 bg-amber-300/15 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
-                
-              >
-                Add Skill
-              </button>
-            </form>
-            <div className="mt-4 flex flex-wrap gap-2">
-              {skills.map((skill) => (
-                <SkillPill key={skill} label={skill} onRemove={() => removeSkill(skill)} />
-              ))}
-            </div>
-          </div>
+          <form onSubmit={handleFormSubmission} className="flex flex-col gap-4">
+            {renderEditableTextField("nickname", "Nickname", "Nickname")}
+            {renderEditableTextField("email", "Email", "Email")}
+            {renderEditableTextField("firstName", "First Name", "First Name")}
+            {renderEditableTextField("lastName", "Last Name", "Last Name")}
+            {renderEditableTextField("contactInfo", "Contact Info", "Contact Info")}
+            {renderEditableTextField("contactMethod", "Contact Method", "Contact Method")}
+            {renderEditableTextField("city", "City", "City")}
+            {renderEditableTextField("region", "Region", "Region")}
+            {renderEditableTextField("dateOfBirth", "Date of Birth", "Date of Birth")}
+          </form>
+            {renderEditableSkillsField()}
           <button
             type="button"
             className="w-full rounded-2xl border border-amber-300/60 bg-amber-300/15 px-4 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
-            onClick={handleSave}
+            onClick={handleFormSubmission}
           >
-            {saveStatus ? `Profile ${saveStatus}` : 'Save Profile'}
+            {saveStatus ? `Profile Update ${saveStatus}` : 'Save Profile'}
           </button>
         </div>
       </div>

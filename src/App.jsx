@@ -15,6 +15,7 @@ import EditProfilePage from './pages/EditProfile'
 
 export default function App() {
   // Currently logged in user state. If null, no user is logged in.
+  // Note that the object format is { token: string, user: userObject } where 'userObject' contains all the user information.
   // Currently used by:
   // - NavBar: To conditionally render the navbar links.
   // - Profile: To display the user's profile information and allow editing.
