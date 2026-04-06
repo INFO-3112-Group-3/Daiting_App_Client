@@ -42,7 +42,8 @@ export default function EditProfilePage({ user, updateUser }) {
     region: false,
     occupation: false,
     notes: false,
-    skills: false
+    skills: false,
+    interests: false
   })
 
   //////////////////////////////////////////////////////////////////////
