@@ -23,6 +23,51 @@ function PictureToBase64(file) {
   });
 }
 
+function GenderToString(gender){
+    switch(gender){
+        case 0:
+            return  "Not Specified";
+        case 1:
+            return "Male";
+        case 2:
+            return "Female";
+        case 4:
+            return "Other";
+        default:
+            return "Not Specified";
+    }
+}
+
+// Calculates age based on the provided date of birth in ISO format (e.g., "1990-01-01").
+function getUserAge(isoString) {
+  const birthDate = new Date(isoString);
+  const today = new Date();
+
+  let age = today.getFullYear() - birthDate.getFullYear();
+
+  const hasHadBirthdayThisYear =
+    today.getMonth() > birthDate.getMonth() ||
+    (today.getMonth() === birthDate.getMonth() &&
+      today.getDate() >= birthDate.getDate());
+
+  if (!hasHadBirthdayThisYear) {
+    age--;
+  }
+
+  return age;
+}
+
+// Returns a formatted date string (e.g., "Jan 01, 1990") based on the provided ISO date string.
+function formatBirthdayDate(isoString) {
+  const date = new Date(isoString);
+
+  return new Intl.DateTimeFormat("en-CA", {
+    year: "numeric",
+    month: "short",
+    day: "2-digit",
+  }).format(date);
+}
+
 const users = {
     getUserInformation: async (id) => {
         let response = await fetch (serverRoute(`api/users/${id}`), {
@@ -71,5 +116,8 @@ const skills = {
 export {
     users,
     skills,
-    PictureToBase64
+    PictureToBase64,
+    GenderToString,
+    getUserAge,
+    formatBirthdayDate
 }

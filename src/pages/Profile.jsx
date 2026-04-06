@@ -5,10 +5,6 @@ import { InputField } from '../components/InputField';
 import * as api from "../utils/api";
 import TagInput from '../components/TagInput';
 
-// ??????????????????????? not sure of purpose
-// const starterSkills = ['React', 'TypeScript', 'AWS', 'Figma']
-// const profileStorageKey = 'find-it.profile'
-
 export default function Profile(props) {
   //////////////////////////////////////////////////////////////////////
   // States....
@@ -398,6 +394,10 @@ export default function Profile(props) {
         </button>
         <p className="mt-4 text-xl font-semibold text-white">
           {fullUser.firstName} {fullUser.lastName} aka {fullUser.nickname}
+        </p>
+        <p className="mt-2 text-xs text-zinc-300">{api.GenderToString(fullUser.gender)}</p>
+        <p className="mt-4 text-sm text-zinc-300">
+          Age {api.getUserAge(fullUser.dateOfBirth)} | Born {api.formatBirthdayDate(fullUser.dateOfBirth)}
         </p>
         <p className="mt-2 text-xs text-zinc-500">{fullUser.city}, {fullUser.region}</p>
         <p className="mt-4 text-sm text-zinc-300">{fullUser.bio}</p>
