@@ -70,6 +70,20 @@ export default function SignUp() {
     user.ContactInfo = form.contactinfo;
     user.ContactMethod = form.contactmethod;
 
+    // If any of the form fields are empty refuse signup.
+    if(user.Salutation == ""
+      || user.Email == ""
+      || user.Password == ""
+      || user.Gender == ""
+      || user.Firstname == ""
+      || user.Lastname == ""
+      || user.ContactInfo == ""
+      || user.ContactMethod == "")
+      {
+       alert("All fields must be filled.")
+       return
+      }
+
     const monthIndex = months.indexOf(form.month);
 
     const year = Number(form.year);
