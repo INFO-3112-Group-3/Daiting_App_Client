@@ -437,14 +437,12 @@ export default function Profile(props) {
         <div className="grid gap-6">
           <form onSubmit={handleFormSubmission} className="flex flex-col gap-4">
             {renderEditableTextField("nickname", "Nickname", "Nickname")}
-            {renderEditableTextField("email", "Email", "Email")}
             {renderEditableTextField("firstName", "First Name", "First Name")}
             {renderEditableTextField("lastName", "Last Name", "Last Name")}
             {renderEditableTextField("contactInfo", "Contact Info", "Contact Info")}
             {renderEditableTextField("contactMethod", "Contact Method", "Contact Method")}
             {renderEditableTextField("city", "City", "City")}
             {renderEditableTextField("region", "Region", "Region")}
-            {renderEditableTextField("dateOfBirth", "Date of Birth", "Date of Birth")}
             {renderEditableTextField("bio", "Bio", "Tell us about yourself...", true)}
             <TagInput
               label="Interests"
