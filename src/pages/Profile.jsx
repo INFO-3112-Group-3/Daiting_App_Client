@@ -3,6 +3,7 @@ import { Button } from '../components/Button';
 import SkillPill from '../components/SkillPill'
 import { InputField } from '../components/InputField';
 import * as api from "../utils/api";
+import TagInput from '../components/TagInput';
 
 // ??????????????????????? not sure of purpose
 // const starterSkills = ['React', 'TypeScript', 'AWS', 'Figma']
@@ -65,17 +66,26 @@ export default function Profile(props) {
   })
   const [saveStatus, setSaveStatus] = useState('')
 
+  // Skills related states.
   const [allSkillOptions, setAllSkillOptions] = useState([]);   // All skill options from the server for the skills field.
   const [userSkills, setUserSkills] = useState([]);       // User's current skills for the skills field.
   const [skillInput, setSkillInput] = useState("")        // Controlled input state for adding skills.
 
-  //////////////////////////////////////////
-  // Unknown.....
-  //////////////////////////////////////////
-
-  const fileInputRef = useRef(null)
-  // const [profile, setProfile] = useState(structuredClone(props.user))
-  // const [form, setForm] = useState();
+  // Interests related states.
+  const setInterests = (newInterests) => {
+    setInputFormData((prev) => ({
+      ...prev,
+      interests:
+        typeof newInterests === "function"
+          ? newInterests(prev.interests)  // TagInput provides the new interests as a function when updating,
+                                          // so we need to call it with the previous interests to get the new value.
+          : Array.isArray(newInterests)   // If it's an array, we can set it directly.
+          ? newInterests
+          : []
+    }));
+  };
+  // Ref for the hidden file input for avatar upload.
+  const uploadedProfilePictureFile = useRef(null)
 
   //////////////////////////////////////////////////////////////////////
   // Functionality....
@@ -124,6 +134,8 @@ export default function Profile(props) {
       if (!data.interests) console.warn("User data missing 'interests' field.")
       if (!data.skills) console.warn("User data missing 'skills' field.")
       if (!data.preferences) console.warn("User data missing 'preferences' field.")
+      if (!data.bio) console.warn("User data missing 'bio' field.")
+      if (!data.profilePictureBase64) console.warn("User data missing 'profilePictureBase64' field.")
 
 
       setInputFormData({
@@ -192,7 +204,8 @@ export default function Profile(props) {
       dateOfBirth: inputFormData.dateOfBirth,
       interests: inputFormData.interests,
       skills: inputFormData.skills,
-      preferences: inputFormData.preferences
+      preferences: inputFormData.preferences,
+      bio: inputFormData.bio,
     }
 
     const res = await api.users.update(updatedProfile)
@@ -223,7 +236,8 @@ export default function Profile(props) {
       dateOfBirth: false,
       interests: false,
       skills: false,
-      preferences: false
+      preferences: false,
+      bio: false
     })
   }
 
@@ -363,7 +377,7 @@ export default function Profile(props) {
             ) :  null}
           </div>
           <input
-            ref={fileInputRef}
+            ref={uploadedProfilePictureFile}
             type="file"
             accept="image/*"
             onChange={handleAvatarChange}
@@ -372,7 +386,7 @@ export default function Profile(props) {
           <button
             type="button"
             className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-[0.2em] text-zinc-400"
-            onClick={() => fileInputRef.current?.click()}
+            onClick={() => uploadedProfilePictureFile.current?.click()}
           >
             Upload Avatar
           </button>
@@ -413,6 +427,13 @@ export default function Profile(props) {
             {renderEditableTextField("region", "Region", "Region")}
             {renderEditableTextField("dateOfBirth", "Date of Birth", "Date of Birth")}
             {renderEditableTextField("bio", "Bio", "Tell us about yourself...")}
+            <TagInput
+              label="Interests"
+              values={inputFormData.interests}
+              setValues={setInterests}
+              editable={isFormFieldEditable.interests}
+              toggleEdit={() => toggleFormFieldEditable("interests")}
+            />
           </form>
             {renderEditableSkillsField()}
           <button
