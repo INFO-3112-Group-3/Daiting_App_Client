@@ -43,7 +43,9 @@ export default function Profile(props) {
     dateOfBirth: '',
     interests: [],
     skills: [],
-    preferences: []
+    preferences: [],
+    bio: '',
+    profilePictureBase64: null
   })
   const [isFormFieldEditable, setIsFormFieldEditable] = useState({
     nickname: false,
@@ -66,13 +68,12 @@ export default function Profile(props) {
   const [allSkillOptions, setAllSkillOptions] = useState([]);   // All skill options from the server for the skills field.
   const [userSkills, setUserSkills] = useState([]);       // User's current skills for the skills field.
   const [skillInput, setSkillInput] = useState("")        // Controlled input state for adding skills.
-  // const [skillInput, setSkillInput] = useState("")
 
   //////////////////////////////////////////
   // Unknown.....
   //////////////////////////////////////////
 
-  // const fileInputRef = useRef(null)
+  const fileInputRef = useRef(null)
   // const [profile, setProfile] = useState(structuredClone(props.user))
   // const [form, setForm] = useState();
 
@@ -139,7 +140,9 @@ export default function Profile(props) {
         dateOfBirth: data.dateOfBirth || '',
         interests: data.interests || [],
         skills: data.skills || [],
-        preferences: data.preferences || []
+        preferences: data.preferences || [],
+        bio: data.bio || '',
+        profilePictureBase64: data.profilePictureBase64 || null
       })
 
       setisDataLoading(false)
@@ -249,13 +252,38 @@ export default function Profile(props) {
     loadSkills();
   }, [])
 
-  //////////////////////////////////////////
-  // Unknown.....
-  //////////////////////////////////////////
+  const handleAvatarChange = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-  // const handleAvatarChange = (event) => {
+    try {
+      // convert image → base64
+      const base64 = await api.PictureToBase64(file);
 
-  // }
+      // update local UI immediately (instant preview)
+      setFullUser((prev) => ({
+        ...prev,
+        profilePictureBase64: base64
+      }));
+
+      // send to backend
+      const updatedUser = {
+        ...fullUser,
+        profilePictureBase64: base64
+      };
+
+      const res = await api.users.update(updatedUser);
+
+      if (!res.ok) {
+        console.error(await res.text());
+        return;
+      }
+
+      console.log("Avatar updated");
+    } catch (err) {
+      console.error("Failed to upload avatar:", err);
+    }
+  };
 
   //////////////////////////////////////////////////////////////////////
   // Rendering....
@@ -327,11 +355,11 @@ export default function Profile(props) {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-16 lg:flex-row">
       <div className="soft-card w-full p-8">
-{/*               <div className="flex w-full flex-col gap-6 lg:max-w-sm">
+{              <div className="flex w-full flex-col gap-6 lg:max-w-sm">
         <div className="soft-card flex flex-col items-center gap-4 p-8">
           <div className="h-28 w-28 overflow-hidden rounded-full border border-amber-300/40 bg-gradient-to-br from-amber-300/40 via-zinc-900 to-black">
-            {profile.avatar ? (
-               <img src={profile.avatar} alt="Profile avatar" className="h-full w-full object-cover" />
+            {fullUser.profilePictureBase64 ? (
+               <img src={fullUser.profilePictureBase64} alt="Profile avatar" className="h-full w-full object-cover" />
             ) :  null}
           </div>
           <input
@@ -356,12 +384,12 @@ export default function Profile(props) {
 
           </h3>
           <p className="mt-1 text-sm text-zinc-400">
-            {profile.age}
+            {fullUser.age}
           </p>
-          {<p className="mt-2 text-xs text-zinc-500">{profile.location}</p>
-          <p className="mt-4 text-sm text-zinc-300">{profile.bio}</p> }
+          {/*<p className="mt-2 text-xs text-zinc-500">{profile.location}</p>
+          <p className="mt-4 text-sm text-zinc-300">{profile.bio}</p> */}
           <div className="mt-4 flex flex-wrap gap-2 text-xs text-zinc-400">
-            {skills.map((skill) => {
+            {userSkills.map((skill) => {
               return (
                 <span
                   key={skill}
@@ -372,7 +400,7 @@ export default function Profile(props) {
             })}
           </div>
         </div>
-      </div> */}
+      </div>}
         <div className="grid gap-6">
           <form onSubmit={handleFormSubmission} className="flex flex-col gap-4">
             {renderEditableTextField("nickname", "Nickname", "Nickname")}
@@ -384,6 +412,7 @@ export default function Profile(props) {
             {renderEditableTextField("city", "City", "City")}
             {renderEditableTextField("region", "Region", "Region")}
             {renderEditableTextField("dateOfBirth", "Date of Birth", "Date of Birth")}
+            {renderEditableTextField("bio", "Bio", "Tell us about yourself...")}
           </form>
             {renderEditableSkillsField()}
           <button

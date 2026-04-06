@@ -1,5 +1,5 @@
-const API_IP = 'https://localhost';
-const API_PORT = 7195;
+const API_IP = 'http://localhost';
+const API_PORT = 5129;
 
 
 const headers = {
@@ -13,12 +13,21 @@ const headers = {
 
 const serverRoute = (route) => `${API_IP}:${API_PORT}/${route}`;
 
+// Used to convert an uploaded file to a base64 string for easier storage in the database and transmission over the network.
+function PictureToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+  });
+}
 
 const users = {
     getUserInformation: async (id) => {
         let response = await fetch (serverRoute(`api/users/${id}`), {
             headers,
-            method: 'GET'   
+            method: 'GET'
         });
         let data = await response.json();
         return data;
@@ -61,5 +70,6 @@ const skills = {
 
 export {
     users,
-    skills
+    skills,
+    PictureToBase64
 }
