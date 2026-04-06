@@ -84,6 +84,7 @@ export default function Profile(props) {
           : []
     }));
   };
+
   // Ref for the hidden file input for avatar upload.
   const uploadedProfilePictureFile = useRef(null)
 
@@ -217,7 +218,8 @@ export default function Profile(props) {
     }
 
     const updatedUser = await api.users.getUserInformation(props.user.user.id);
-    setFullUser(updatedUser)
+    setFullUser(updatedUser);
+    setInputFormData(updatedUser);
     props.updateUser({ ...props.user, user: updatedUser });
     setSaveStatus("Success")
 
@@ -308,7 +310,7 @@ export default function Profile(props) {
   //  - TODO: Interests field
   //  - TODO: Date of Birth field
   //////////////////////////////////////////////////////////////////////
-  const renderEditableTextField = (fieldKey, label, placeholder) => {
+  const renderEditableTextField = (fieldKey, label, placeholder, multiline = false) => {
     return (
       <div>
         <div className="flex items-center justify-between mb-2">
@@ -321,14 +323,25 @@ export default function Profile(props) {
             {isFormFieldEditable[fieldKey] ? "Lock" : "Edit"}
           </button>
         </div>
-        <input
-          className="input"
-          name={fieldKey}
-          value={inputFormData[fieldKey] || ''}
-          onChange={handleInputFormChanges}
-          placeholder={placeholder}
-          disabled={!isFormFieldEditable[fieldKey]}
-        />
+          {multiline ? (
+            <textarea
+              className="input min-h-[120px] resize-y"
+              name={fieldKey}
+              value={inputFormData[fieldKey] || ''}
+              onChange={handleInputFormChanges}
+              placeholder={placeholder}
+              disabled={!isFormFieldEditable[fieldKey]}
+            />
+          ) : (
+            <input
+              className="input"
+              name={fieldKey}
+              value={inputFormData[fieldKey] || ''}
+              onChange={handleInputFormChanges}
+              placeholder={placeholder}
+              disabled={!isFormFieldEditable[fieldKey]}
+            />
+          )}
       </div>
     );
   }
@@ -426,7 +439,7 @@ export default function Profile(props) {
             {renderEditableTextField("city", "City", "City")}
             {renderEditableTextField("region", "Region", "Region")}
             {renderEditableTextField("dateOfBirth", "Date of Birth", "Date of Birth")}
-            {renderEditableTextField("bio", "Bio", "Tell us about yourself...")}
+            {renderEditableTextField("bio", "Bio", "Tell us about yourself...", true)}
             <TagInput
               label="Interests"
               values={inputFormData.interests}
