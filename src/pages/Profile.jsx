@@ -71,20 +71,6 @@ export default function Profile(props) {
   const [userSkills, setUserSkills] = useState([]);       // User's current skills for the skills field.
   const [skillInput, setSkillInput] = useState("")        // Controlled input state for adding skills.
 
-  // Interests related states.
-  const setInterests = (newInterests) => {
-    setInputFormData((prev) => ({
-      ...prev,
-      interests:
-        typeof newInterests === "function"
-          ? newInterests(prev.interests)  // TagInput provides the new interests as a function when updating,
-                                          // so we need to call it with the previous interests to get the new value.
-          : Array.isArray(newInterests)   // If it's an array, we can set it directly.
-          ? newInterests
-          : []
-    }));
-  };
-
   // Ref for the hidden file input for avatar upload.
   const uploadedProfilePictureFile = useRef(null)
 
@@ -183,8 +169,6 @@ export default function Profile(props) {
     }))
   }
 
-  // Undocumented atm...
-
   const handleFormSubmission = async (e) => {
     e.preventDefault()
 
@@ -255,7 +239,7 @@ export default function Profile(props) {
     if (skillInput && !userSkills.includes(skillInput) && allSkillOptions.some(option => option.name === skillInput)) {
       setUserSkills((prev) => [...prev, skillInput]);
       setInputFormData((prev) => ({ ...prev, [userSkills]: userSkills }));
-    } else{
+    } else {
       alert("Please select a valid skill that is not already added.")
     }
   }
@@ -301,6 +285,21 @@ export default function Profile(props) {
     }
   };
 
+
+  const setInterests = (newInterests) => {
+
+    setInputFormData((prev) => ({
+      ...prev,
+      interests:
+        typeof newInterests === "function"
+          ? newInterests(prev.interests)  // TagInput provides the new interests as a function when updating,
+          // so we need to call it with the previous interests to get the new value.
+          : Array.isArray(newInterests)   // If it's an array, we can set it directly.
+            ? newInterests
+            : []
+    }));
+  };
+
   //////////////////////////////////////////////////////////////////////
   // Rendering....
   //  - Dont display page based on isDataLoading state while fetching user data.  (No null errors!)
@@ -323,25 +322,25 @@ export default function Profile(props) {
             {isFormFieldEditable[fieldKey] ? "Lock" : "Edit"}
           </button>
         </div>
-          {multiline ? (
-            <textarea
-              className="input min-h-[120px] resize-y"
-              name={fieldKey}
-              value={inputFormData[fieldKey] || ''}
-              onChange={handleInputFormChanges}
-              placeholder={placeholder}
-              disabled={!isFormFieldEditable[fieldKey]}
-            />
-          ) : (
-            <input
-              className="input"
-              name={fieldKey}
-              value={inputFormData[fieldKey] || ''}
-              onChange={handleInputFormChanges}
-              placeholder={placeholder}
-              disabled={!isFormFieldEditable[fieldKey]}
-            />
-          )}
+        {multiline ? (
+          <textarea
+            className="input min-h-[120px] resize-y"
+            name={fieldKey}
+            value={inputFormData[fieldKey] || ''}
+            onChange={handleInputFormChanges}
+            placeholder={placeholder}
+            disabled={!isFormFieldEditable[fieldKey]}
+          />
+        ) : (
+          <input
+            className="input"
+            name={fieldKey}
+            value={inputFormData[fieldKey] || ''}
+            onChange={handleInputFormChanges}
+            placeholder={placeholder}
+            disabled={!isFormFieldEditable[fieldKey]}
+          />
+        )}
       </div>
     );
   }
@@ -374,6 +373,57 @@ export default function Profile(props) {
       </div>)
   }
 
+  const renderProfileHeader = () => {
+    return (<div className="flex w-full flex-col gap-6 lg:max-w-sm">
+      <div className="soft-card flex flex-col items-center gap-4 p-8">
+        <div className="h-28 w-28 overflow-hidden rounded-full border border-amber-300/40 bg-gradient-to-br from-amber-300/40 via-zinc-900 to-black">
+          {fullUser.profilePictureBase64 ? (
+            <img src={fullUser.profilePictureBase64} alt="Profile avatar" className="h-full w-full object-cover" />
+          ) : null}
+        </div>
+        <input
+          ref={uploadedProfilePictureFile}
+          type="file"
+          accept="image/*"
+          onChange={handleAvatarChange}
+          className="hidden"
+        />
+        <button
+          type="button"
+          className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-[0.2em] text-zinc-400"
+          onClick={() => uploadedProfilePictureFile.current?.click()}
+        >
+          Upload Avatar
+        </button>
+        <p className="mt-4 text-xl font-semibold text-white">
+          {fullUser.firstName} {fullUser.lastName} aka {fullUser.nickname}
+        </p>
+        <p className="mt-2 text-xs text-zinc-500">{fullUser.city}, {fullUser.region}</p>
+        <p className="mt-4 text-sm text-zinc-300">{fullUser.bio}</p>
+        <div className="mt-4 flex flex-wrap gap-2 text-xs text-zinc-400">
+          {userSkills.map((skill) => {
+            return (
+              <span
+                key={skill}
+                className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1"
+              >
+                {skill}
+              </span>)
+          })}
+          {fullUser.interests.map((skill) => {
+            return (
+              <span
+                key={skill}
+                className="rounded-full border border-blue-300/30 bg-blue-300/10 px-3 py-1"
+              >
+                {skill}
+              </span>)
+          })}
+        </div>
+      </div>
+    </div>)
+  }
+
   if (isDataLoading) {
     return <div className="p-6 text-white">Loading profile...</div>
   }
@@ -382,52 +432,7 @@ export default function Profile(props) {
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-6 py-16 lg:flex-row">
       <div className="soft-card w-full p-8">
-{              <div className="flex w-full flex-col gap-6 lg:max-w-sm">
-        <div className="soft-card flex flex-col items-center gap-4 p-8">
-          <div className="h-28 w-28 overflow-hidden rounded-full border border-amber-300/40 bg-gradient-to-br from-amber-300/40 via-zinc-900 to-black">
-            {fullUser.profilePictureBase64 ? (
-               <img src={fullUser.profilePictureBase64} alt="Profile avatar" className="h-full w-full object-cover" />
-            ) :  null}
-          </div>
-          <input
-            ref={uploadedProfilePictureFile}
-            type="file"
-            accept="image/*"
-            onChange={handleAvatarChange}
-            className="hidden"
-          />
-          <button
-            type="button"
-            className="rounded-full border border-border px-4 py-2 text-xs uppercase tracking-[0.2em] text-zinc-400"
-            onClick={() => uploadedProfilePictureFile.current?.click()}
-          >
-            Upload Avatar
-          </button>
-          <p className="text-xs text-zinc-500">PNG or JPG, 2MB max.</p>
-        </div>
-        <div className="soft-card p-6">
-          <p className="label">Profile Snapshot</p>
-          <h3 className="mt-4 text-xl font-semibold text-white">
-
-          </h3>
-          <p className="mt-1 text-sm text-zinc-400">
-            {fullUser.age}
-          </p>
-          {/*<p className="mt-2 text-xs text-zinc-500">{profile.location}</p>
-          <p className="mt-4 text-sm text-zinc-300">{profile.bio}</p> */}
-          <div className="mt-4 flex flex-wrap gap-2 text-xs text-zinc-400">
-            {userSkills.map((skill) => {
-              return (
-                <span
-                  key={skill}
-                  className="rounded-full border border-amber-300/30 bg-amber-300/10 px-3 py-1"
-                >
-                  {skill}
-                </span>)
-            })}
-          </div>
-        </div>
-      </div>}
+        {renderProfileHeader()}
         <div className="grid gap-6">
           <form onSubmit={handleFormSubmission} className="flex flex-col gap-4">
             {renderEditableTextField("nickname", "Nickname", "Nickname")}
@@ -448,7 +453,7 @@ export default function Profile(props) {
               toggleEdit={() => toggleFormFieldEditable("interests")}
             />
           </form>
-            {renderEditableSkillsField()}
+          {renderEditableSkillsField()}
           <button
             type="button"
             className="w-full rounded-2xl border border-amber-300/60 bg-amber-300/15 px-4 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
