@@ -124,6 +124,7 @@ export default function Profile(props) {
       if (!data.bio) console.warn("User data missing 'bio' field.")
       if (!data.profilePictureBase64) console.warn("User data missing 'profilePictureBase64' field.")
 
+      setUserSkills(data.skills || [])
 
       setInputFormData({
         nickname: data.nickname || '',
@@ -188,7 +189,7 @@ export default function Profile(props) {
       region: inputFormData.region,
       dateOfBirth: inputFormData.dateOfBirth,
       interests: inputFormData.interests,
-      skills: inputFormData.skills,
+      skills: userSkills,
       preferences: inputFormData.preferences,
       bio: inputFormData.bio,
     }

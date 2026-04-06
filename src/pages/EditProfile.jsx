@@ -75,8 +75,8 @@ export default function EditProfilePage({ user, updateUser }) {
       region: form.region,
       occupation: form.occupation,
       notes: form.notes,
-      skills,
-      interests
+      skills : skills,
+      interests: interests
     }
 
     const res = await users.updateProfile(fullUser.username, updatedProfile)
