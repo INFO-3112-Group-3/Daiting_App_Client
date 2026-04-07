@@ -101,6 +101,15 @@ const users = {
         })
         return response;
     },
+
+    getSuggestedMatches: async(id) => {
+        let response = await fetch(serverRoute("api/users/" + id + "/matches"), {
+            headers,
+            method: 'GET',
+        })
+        let data = await response.json();
+        return data;
+    }
 }
 const skills = {
     getSkills: async () => {

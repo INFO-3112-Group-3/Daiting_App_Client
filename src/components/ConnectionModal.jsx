@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Check, Loader2 } from 'lucide-react'
 
-export default function ConnectionModal({ open, onClose }) {
+export default function ConnectionModal({ open, onClose, match }) {
   const [status, setStatus] = useState('loading')
 
   useEffect(() => {
@@ -28,7 +28,7 @@ export default function ConnectionModal({ open, onClose }) {
             exit={{ y: 80, opacity: 0 }}
           >
             <div className="flex items-center justify-between">
-              <p className="text-sm uppercase tracking-[0.3em] text-zinc-400">Connection</p>
+              <p className="text-sm uppercase tracking-[0.3em] text-zinc-400">Connecting with {match?.profile?.firstName}</p>
               <button
                 type="button"
                 onClick={onClose}

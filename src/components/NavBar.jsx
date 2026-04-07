@@ -1,5 +1,6 @@
 import { Link, NavLink ,useNavigate } from 'react-router-dom'
 import { Sparkles } from 'lucide-react'
+import { label } from 'framer-motion/client';
 
 // Base Navbar Items : These navbar items are always present at the top.
 // - Label: The text that will be shown on the navbar.
@@ -28,6 +29,7 @@ export default function NavBar(props) {
         ...baseNavItems.slice(0, 2), // Home and Discover
         { label: 'Matches', to: '/matches' },
         { label: 'Edit Profile', to: '/profile' },
+        { label: 'Suggested Matches', to:'/suggested'},
         ...baseNavItems.slice(2, 6), // Sign Up, About
       ]
     : baseNavItems;

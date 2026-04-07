@@ -11,6 +11,7 @@ import SimplePage from './pages/SimplePage'
 import { useState } from "react"
 import * as api from "../src/utils/api"
 import EditProfilePage from './pages/EditProfile'
+import SuggestedMatches from './pages/SuggestedMatches'
 
 
 export default function App() {
@@ -45,6 +46,12 @@ export default function App() {
             <Route path="/signin" element={<SignIn updateUser={updateUser} />} /> {/* Signin page, button on the top right of navbar. */}
             <Route path="/matches" element={<MatchesPage />} />                   {/* Matches page, shows all the user's matches. */}
             <Route path="/discover" element={<Discover />} />                     {/* Discover page, shows potential matches based on swiping algorithm. */}
+            <Route
+              path="/suggested"
+              element={
+                user ? <SuggestedMatches userId={user.id? user.id : user.user.id} /> : <></>
+              }
+            />
             <Route path="/profile" element={<Profile user={user} updateUser={updateUser} />} /> {/* User's profile to edit their information */}
             <Route
               path="/about"
