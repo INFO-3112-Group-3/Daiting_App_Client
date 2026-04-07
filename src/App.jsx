@@ -37,7 +37,7 @@ export default function App() {
     <div className="min-h-screen bg-ink text-white">
       <div className="min-h-screen bg-hero-radial">
         {/* See "components/NavBar" for the items which are displayed based on user logged in status */}
-        <NavBar user={user} />
+        <NavBar user={user} setUser={setUser}/>
         <main>
           <Routes>
             <Route path="/" element={<Landing />} />                              {/* Main page which shows up by default */}

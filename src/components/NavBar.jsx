@@ -1,4 +1,4 @@
-import { Link, NavLink } from 'react-router-dom'
+import { Link, NavLink ,useNavigate } from 'react-router-dom'
 import { Sparkles } from 'lucide-react'
 
 // Base Navbar Items : These navbar items are always present at the top.
@@ -17,6 +17,8 @@ const baseNavItems = [
 ]
 
 export default function NavBar(props) {
+  const navigate = useNavigate();
+
   // Actual Navbar Items
   // If the user is logged in, show the Edit Profile link in the nav bar.
   // Insert after the disco
@@ -68,14 +70,19 @@ export default function NavBar(props) {
           </Link>
         )}
         {/* If the user is logged in, show a logout link */}
-        {props.user && (
-          <Link
-            to="/logout"
-            className="rounded-full border border-rose/40 bg-rose/10 px-5 py-2 text-sm font-semibold text-white shadow-[0_0_20px_rgba(234,82,82,0.25)] transition hover:bg-rose/20"
-          >
-            Logout
-          </Link>
-        )}
+          {props.user && (
+            <button
+              onClick={() => {
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+                props.setUser(null);
+                navigate("/signin");
+              }}
+              className="rounded-full border border-rose/40 bg-rose/10 px-5 py-2 text-sm font-semibold text-white shadow-[0_0_20px_rgba(234,82,82,0.25)] transition hover:bg-rose/20"
+            >
+              Logout
+            </button>
+          )}
       </div>
     </header>
   )
