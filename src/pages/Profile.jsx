@@ -371,7 +371,7 @@ export default function Profile(props) {
   }
 
   const renderProfileHeader = () => {
-    return (<div className="flex w-full flex-col gap-6 lg:max-w-sm">
+    return (<div className="flex w-full flex-col gap-6">
       <div className="soft-card flex flex-col items-center gap-4 p-8">
         <div className="h-28 w-28 overflow-hidden rounded-full border border-amber-300/40 bg-gradient-to-br from-amber-300/40 via-zinc-900 to-black">
           {fullUser.profilePictureBase64 ? (
