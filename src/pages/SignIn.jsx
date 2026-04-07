@@ -4,7 +4,11 @@ import { InputField } from '../components/InputField'
 import { useState } from 'react'
 export default function SignIn(props) {
 
-	const [form, setForm] = useState([])
+	const [form, setForm] = useState({
+  email: '',
+  password: ''
+  })
+
   const navigate = useNavigate();
 	// Keep form state in sync with both fields.
 	const handleChange = ({ target }) => {
