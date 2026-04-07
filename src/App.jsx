@@ -14,12 +14,17 @@ import EditProfilePage from './pages/EditProfile'
 
 
 export default function App() {
+  // Saved user which has logged in previously.
+  const savedUser = localStorage.getItem("user");
+
   // Currently logged in user state. If null, no user is logged in.
   // Note that the object format is { token: string, user: userObject } where 'userObject' contains all the user information.
   // Currently used by:
   // - NavBar: To conditionally render the navbar links.
   // - Profile: To display the user's profile information and allow editing.
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState(
+    savedUser ? JSON.parse(savedUser) : null // See SignIn.handleSubmit for how the user gets set..
+  );
 
   // Callback that will be sent to the login component to update current user state.
   const updateUser = ((currentUser) => {

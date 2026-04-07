@@ -23,6 +23,11 @@ export default function SignIn(props) {
       const user = await response.json();
 			props.updateUser(user);
 			console.log(user);
+
+      // Store into local data storage so we dont have to relog on refresh.
+      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", user.token);
+
 			//change this to the profile
 			navigate('/profile')
 		}
