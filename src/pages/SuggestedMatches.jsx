@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react"
 import * as api from "../utils/api"
 import ConnectionModal from "../components/ConnectionModal"
+
 export default function SuggestedMatches(props) {
   const [matches, setMatches] = useState([])
   const [loading, setLoading] = useState(true)
