@@ -44,6 +44,10 @@ export default function Profile(props) {
     bio: '',
     profilePictureBase64: null
   })
+  const [prefForm, setPrefForm] = useState({
+    Importance: "",
+    PrefInfo: ""
+  })
   const [isFormFieldEditable, setIsFormFieldEditable] = useState({
     nickname: false,
     email: false,
@@ -67,6 +71,12 @@ export default function Profile(props) {
   const [userSkills, setUserSkills] = useState([]);       // User's current skills for the skills field.
   const [skillInput, setSkillInput] = useState("")        // Controlled input state for adding skills.
 
+
+  //Preference related states
+  const [allPrefOptions, setAllPrefOptions] = useState([]);
+  const [userPrefs,setUserPrefs] = useState([]);
+  const [prefInput, setPrefInput] = useState("");
+  
   // Ref for the hidden file input for avatar upload.
   const uploadedProfilePictureFile = useRef(null)
 
@@ -229,6 +239,12 @@ export default function Profile(props) {
     setAllSkillOptions(response);
   }
 
+   const loadPrefs = async () => {
+    let response = await api.preferences.getAllPrefs();
+    setAllPrefOptions(response);
+  }
+
+
   const addSkill = (event) => {
     event.preventDefault();
 
@@ -241,12 +257,22 @@ export default function Profile(props) {
     }
   }
 
+
+  const addPreference = (event) => {
+    event.preventDefault();
+    let userPreference = {PreferenceType: prefInput, PreferenceInfo : prefForm.info, Importance: prefForm.importance};
+    
+    setUserPrefs((prev) => [...prev, userPreference]);
+    console.log(userPreference);
+  }
+
   const removeSkill = (skill) => {
     setUserSkills((prev) => prev.filter((item) => item !== skill))
   }
 
   useEffect(() => {
     loadSkills();
+     loadPrefs();
   }, [])
 
   const handleAvatarChange = async (event) => {
@@ -296,6 +322,10 @@ export default function Profile(props) {
             : []
     }));
   };
+
+  const handleChange = ({ target }) => {
+      setPrefForm((prev) => ({ ...prev, [target.name]: target.value }))
+    }
 
   //////////////////////////////////////////////////////////////////////
   // Rendering....
@@ -367,6 +397,30 @@ export default function Profile(props) {
             <SkillPill key={skill} label={skill} onRemove={() => removeSkill(skill)} />
           ))}
         </div>
+      </div>)
+  }
+
+  const renderEditablePrefsField = () => {
+    return (
+      <div>
+        <p className="label mb-2">Preferences</p>
+        <form onSubmit={addPreference} className="flex flex-col gap-3 sm:flex-row">
+          <select name="day" className="input"
+            value={prefInput}
+            onChange={(e) => setPrefInput(e.target.value)}>
+            {Array.from(allPrefOptions).map((pref) => {
+              return <option key={pref} value={pref}>{pref}</option>
+            })}
+          </select>
+          <InputField className="input" placeholder="EnterInfo" value={prefForm.info} name="info" onChange={handleChange}/>
+          <InputField className="input" placeholder="Importance Value" value={prefForm.importance} name="importance" onChange={handleChange}/>
+          <button
+            type="submit"
+            className="rounded-2xl border border-amber-300/60 bg-amber-300/15 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
+          >
+            Add Preference
+          </button>
+        </form>
       </div>)
   }
 
@@ -453,6 +507,7 @@ export default function Profile(props) {
             />
           </form>
           {renderEditableSkillsField()}
+          {renderEditablePrefsField()}
           <button
             type="button"
             className="w-full rounded-2xl border border-amber-300/60 bg-amber-300/15 px-4 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"

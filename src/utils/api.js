@@ -121,6 +121,16 @@ const skills = {
         return data;
     }
 }
+const preferences ={
+    getAllPrefs: async () => {
+        let response = await fetch(serverRoute("api/preferences"),{
+            headers,
+            method: 'GET'
+        });
+        let data = await response.json();
+        return data;
+    }
+}
 
 export {
     users,
@@ -128,5 +138,6 @@ export {
     PictureToBase64,
     GenderToString,
     getUserAge,
-    formatBirthdayDate
+    formatBirthdayDate,
+    preferences
 }
