@@ -12,11 +12,10 @@ const IconMap = {
 };
 
 export default function MatchDetailModal({ open, onClose, matchData, currentUserId }) {
-    // matchData now contains { Profile, Rating }
-    const profile = matchData?.profile || matchData; // Fallback for Discover.jsx
+    // matchData contains { Profile, Rating }
+    const profile = matchData?.profile || matchData;
     const [rating, setRating] = useState(0);
 
-    // Sync rating when modal opens
     useEffect(() => {
         if (open && matchData?.rating) {
             setRating(matchData.rating);

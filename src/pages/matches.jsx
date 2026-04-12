@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Star, Heart, Loader2 } from 'lucide-react'; // For a nice spinner
+import { Star, Loader2 } from 'lucide-react';
 import * as api from "../utils/api";
 import MatchDetailModal from '../components/MatchDetailModal';
 
 export default function MatchesPage({ userId }) {
     const [matches, setMatches] = useState([]);
-    const [loading, setLoading] = useState(true); // Start as true
+    const [loading, setLoading] = useState(true);
     const [selectedMatchData, setSelectedMatchData] = useState(null);
 
     useEffect(() => {
