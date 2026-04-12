@@ -131,7 +131,9 @@ export default function Profile(props) {
       if (!data.profilePictureBase64) console.warn("User data missing 'profilePictureBase64' field.")
 
       setUserSkills(data.skills || [])
+      setUserPrefs(data.preferences || [])
 
+      console.log(data.preferences)
       setInputFormData({
         nickname: data.nickname || '',
         email: data.email || '',
@@ -260,10 +262,9 @@ export default function Profile(props) {
 
   const addPreference = (event) => {
     event.preventDefault();
-    let userPreference = {PreferenceType: prefInput, PreferenceInfo : prefForm.info, Importance: prefForm.importance};
+    let userPreference = {preferenceType: prefInput, preferenceInfo : prefForm.info, importance: prefForm.importance};
     
     setUserPrefs((prev) => [...prev, userPreference]);
-    console.log(userPreference);
   }
 
   const removeSkill = (skill) => {
@@ -323,6 +324,10 @@ export default function Profile(props) {
     }));
   };
 
+  const deletePref = (pref) =>
+  {
+    setUserPrefs(userPrefs.filter((item) => (item.preferenceType + " " + item.preferenceInfo) != (pref.preferenceType + " " + pref.preferenceInfo)));
+  }
   const handleChange = ({ target }) => {
       setPrefForm((prev) => ({ ...prev, [target.name]: target.value }))
     }
@@ -508,6 +513,24 @@ export default function Profile(props) {
           </form>
           {renderEditableSkillsField()}
           {renderEditablePrefsField()}
+
+          <div>
+           {userPrefs.map((pref) => {
+
+            return (
+                <div key={(pref.preferenceType + " " + pref.preferenceInfo)} className="flex items-center justify-between mb-2">
+              <p> {pref.preferenceType} {pref.preferenceInfo} {pref.importance}</p>
+            <button
+              type="button"
+              onClick={() => deletePref(pref)}
+              className="text-sm text-blue-400"
+            >
+                 {"Delete Pref"}
+             </button>
+            </div>
+              )
+            })}
+          </div>
           <button
             type="button"
             className="w-full rounded-2xl border border-amber-300/60 bg-amber-300/15 px-4 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"

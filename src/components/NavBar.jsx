@@ -9,9 +9,11 @@ const baseNavItems = [
   { label: 'Home', to: '/'},
   { label: 'Discover', to: '/discover' },
   { label: 'Sign Up', to: '/signup' },
+  { label: 'Dashboard', to: '/admin' },
   { label: 'About', to: '/about' },
   { label: 'Privacy', to: '/privacy' },
   { label: 'Terms', to: '/terms' },
+  
   // Only when logged in, see 'navItems' generation in NavBar component for more details.:
   //  { label: 'Matches', to: '/matches' },
   //  { label: 'Edit Profile', to: '/profile'}
