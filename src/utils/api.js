@@ -131,6 +131,16 @@ const preferences ={
         return data;
     }
 }
+const stats ={
+    getAllStats: async () => {
+        let response = await fetch(serverRoute("api/admin/dashboard/stats"),{
+            headers,
+            method: 'GET'
+        });
+        let data = await response.json();
+        return data;
+    }
+}
 
 export {
     users,
@@ -139,5 +149,6 @@ export {
     GenderToString,
     getUserAge,
     formatBirthdayDate,
-    preferences
+    preferences,
+    stats
 }

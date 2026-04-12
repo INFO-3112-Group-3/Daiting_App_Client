@@ -11,6 +11,7 @@ import SimplePage from './pages/SimplePage'
 import { useState } from "react"
 import * as api from "../src/utils/api"
 import SuggestedMatches from './pages/SuggestedMatches'
+import AdminDashboard from './pages/AdminDashboard'
 
 
 export default function App() {
@@ -45,6 +46,7 @@ export default function App() {
             <Route path="/signin" element={<SignIn updateUser={updateUser} />} /> {/* Signin page, button on the top right of navbar. */}
             <Route path="/matches" element={<MatchesPage />} />                   {/* Matches page, shows all the user's matches. */}
             <Route path="/discover" element={<Discover />} />                     {/* Discover page, shows potential matches based on swiping algorithm. */}
+            <Route path="/admin" element={<AdminDashboard />} />
             <Route
               path="/suggested"
               element={
