@@ -142,6 +142,34 @@ const stats ={
     }
 }
 
+const matches ={
+    connect: async (requesterId, targetId) => {
+        let response = await fetch(serverRoute(`api/matches/${requesterId}/connect/${targetId}`),{
+            headers,
+            method: 'POST'
+        })
+        let data = await response.json();
+        return data;
+    },
+    decline: async (requesterId, targetId) => {
+        let response = await fetch(serverRoute(`api/matches/${requesterId}/decline/${targetId}`),{
+            headers,
+            method: 'POST'
+        })
+        let data = await response.json();
+        return data;
+    },
+    rate: async (requesterId, targetId, rating) => {
+        let response = await fetch(serverRoute(`api/matches/${requesterId}/rate/${targetId}`),{
+            headers,
+            method: 'PATCH',
+            body: JSON.stringify(rating)
+        })
+        let data = await response.json();
+        return data;
+    }
+}
+
 export {
     users,
     skills,
@@ -150,5 +178,6 @@ export {
     getUserAge,
     formatBirthdayDate,
     preferences,
-    stats
+    stats,
+    matches
 }
