@@ -1,3 +1,5 @@
+import { UserRoundIcon } from "lucide-react";
+
 const API_IP = 'http://localhost';
 const API_PORT = 5129;
 
@@ -178,6 +180,20 @@ const matches ={
     }
 }
 
+const payment ={
+    subscribe: async (userId, cardNumber,exprDate,cvv,amount) =>
+    {
+        let response = await fetch (serverRoute('api/payments/process'),{
+            headers,
+            method: 'POST',
+            body : JSON.stringify({CardNumber: cardNumber, ExpiryDate: exprDate, CVV: cvv, Amount: amount, UserId: userId})
+        })
+        let data = await response.json();
+        return data;
+    }
+
+}
+
 export {
     users,
     skills,
@@ -187,5 +203,6 @@ export {
     formatBirthdayDate,
     preferences,
     stats,
-    matches
+    matches,
+    payment,
 }

@@ -1,21 +1,22 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import * as api from '../utils/api';
+import { UNSAFE_getTurboStreamSingleFetchDataStrategy } from 'react-router-dom';
 
 export default function AdminDashboard() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [loggedIn, setLoggedIn] = useState(false)
+
+
+
   const [stats, setStats] = useState([]);
   
-  const handleLogin = async (event) => {
-    event.preventDefault()
-    setLoggedIn(true)
-
+  const getStats = async () =>
+  {
     let response = await api.stats.getAllStats();
 
     setStats(Object.entries(response));
-    console.log(Object.entries(response))
   }
+  useEffect(() => {
+    getStats();
+  }, [])
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-8 px-6 py-16">
@@ -26,34 +27,6 @@ export default function AdminDashboard() {
           Admin-only overview of key membership and matching metrics.
         </p>
       </div>
-
-      {!loggedIn ? (
-        <div className="soft-card w-full max-w-md p-6">
-          <h3 className="text-lg font-semibold text-white">Admin login</h3>
-          <form onSubmit={handleLogin} className="mt-4 space-y-3">
-            <input
-              className="input"
-              type="email"
-              placeholder="admin@findit.love"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-            />
-            <input
-              className="input"
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
-            <button
-              type="submit"
-              className="w-full rounded-2xl border border-amber-300/60 bg-amber-300/15 px-4 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
-            >
-              Sign in
-            </button>
-          </form>
-        </div>
-      ) : (
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           {stats.map((stat) => (
             <div key={stat[0]} className="soft-card p-6">
@@ -63,7 +36,7 @@ export default function AdminDashboard() {
             </div>
           ))}
         </div>
-      )}
+      
     </div>
   )
 }

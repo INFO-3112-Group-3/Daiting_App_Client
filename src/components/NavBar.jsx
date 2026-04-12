@@ -1,15 +1,14 @@
 import { Link, NavLink ,useNavigate } from 'react-router-dom'
 import { Sparkles } from 'lucide-react'
 import { label } from 'framer-motion/client';
+import { matches } from '../utils/api';
 
 // Base Navbar Items : These navbar items are always present at the top.
 // - Label: The text that will be shown on the navbar.
 // - To: The path that the user will be directed to when they click on the navbar item.
 const baseNavItems = [
   { label: 'Home', to: '/'},
-  { label: 'Discover', to: '/discover' },
   { label: 'Sign Up', to: '/signup' },
-  { label: 'Dashboard', to: '/admin' },
   { label: 'About', to: '/about' },
   { label: 'Privacy', to: '/privacy' },
   { label: 'Terms', to: '/terms' },
@@ -30,15 +29,24 @@ export default function NavBar(props) {
     ? [
         ...baseNavItems.slice(0, 2), // Home and Discover
         { label: 'Matches', to: '/matches' },
+        { label: 'Discover', to: '/discover' },
         { label: 'Edit Profile', to: '/profile' },
-        { label: 'Suggested Matches', to:'/suggested'},
-        ...baseNavItems.slice(2, 6), // Sign Up, About
+        ...baseNavItems.slice(2, 5), // Sign Up, About
       ]
     : baseNavItems;
 
   // Don't show the signup nav item if the user is logged in.
   if (props.user) {
     navItems.splice(navItems.findIndex(item => item.to === '/signup'), 1);
+
+  }
+  if (props.user?.user?.isAdminUser)
+  {
+    navItems.push({ label: 'Admin Tools', to: '/admin' });
+  }
+  if (!props.user?.user?.isPaidUser)
+  {
+    navItems.splice(navItems.findIndex(item => item.to === '/matches'),2);
   }
 
   return (

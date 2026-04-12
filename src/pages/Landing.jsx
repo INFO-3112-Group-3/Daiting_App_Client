@@ -1,7 +1,26 @@
-import { Link } from 'react-router-dom'
+import { Link,useNavigate } from 'react-router-dom'
 import { ArrowRight } from 'lucide-react'
+import {useState} from 'react'
+import PremiumModal from '../components/PremiumModal';
+export default function Landing(props) {
 
-export default function Landing() {
+  const [premiumOpen, setPremiumOpen] = useState(false);
+
+  const navigate = useNavigate();
+
+  const handleClick = async () =>
+  {
+    console.log(props.user.user);
+      if (props.user.user && !props.user.user.isPaidUser)
+      {
+        setPremiumOpen(true);
+      }
+      else
+      {
+        navigate('/signup');
+      }
+  }
+
   return (
     <div className="relative overflow-hidden">
       <section className="mx-auto grid w-full max-w-6xl gap-12 px-6 py-16 lg:grid-cols-[1.1fr_0.9fr]">
@@ -21,13 +40,11 @@ export default function Landing() {
             >
               Find a Match
             </Link>
-            <Link
-              to="/signup"
-              className="flex items-center gap-2 rounded-full border border-border px-6 py-3 text-sm font-semibold text-zinc-200 transition hover:border-amber-300/60 hover:text-white"
-            >
-              Create Account
-              <ArrowRight size={16} />
-            </Link>
+           <button
+              type="button"
+              onClick={handleClick}
+              className="rounded-full border border-amber-300/60 bg-amber-300/15 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_25px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
+            >{props.user.user && !props.user.user.isPaidUser ? "Upgrade To Premium User" : "Create an Account"}</button>
           </div>
         </div>
         <div className="relative">
@@ -48,6 +65,7 @@ export default function Landing() {
           <div className="absolute -top-8 -right-6 h-24 w-24 rounded-full bg-emerald-400/20 blur-3xl" />
         </div>
       </section>
+      <PremiumModal open={premiumOpen} fullUser={props.user || null} onClose={() => setPremiumOpen(false)} />
     </div>
   )
 }

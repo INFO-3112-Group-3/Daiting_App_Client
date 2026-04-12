@@ -33,8 +33,8 @@ export default function SignIn(props) {
       localStorage.setItem("user", JSON.stringify(user));
       localStorage.setItem("token", user.token);
 
-      //change this to the profile
-      navigate('/profile')
+      
+      navigate('/')
     }
     else {
       setError('Login failed. Check email or password.')

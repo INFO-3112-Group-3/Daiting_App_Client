@@ -10,7 +10,6 @@ import MatchesPage from './pages/matches'
 import SimplePage from './pages/SimplePage'
 import { useState } from "react"
 import * as api from "../src/utils/api"
-import SuggestedMatches from './pages/SuggestedMatches'
 import AdminDashboard from './pages/AdminDashboard'
 
 
@@ -41,18 +40,12 @@ export default function App() {
         <NavBar user={user} setUser={setUser}/>
         <main>
           <Routes>
-            <Route path="/" element={<Landing />} />                              {/* Main page which shows up by default */}
+            <Route path="/" element={<Landing user={user}/>} />                              {/* Main page which shows up by default */}
             <Route path="/signup" element={<SignUp />} />                         {/* Signup page */}
             <Route path="/signin" element={<SignIn updateUser={updateUser} />} /> {/* Signin page, button on the top right of navbar. */}
-            <Route path="/matches" element={ user ? <MatchesPage userId={user.id ? user.id : user.user.id} /> : <Landing />} />                   {/* Matches page, shows all the user's matches. */}
-            <Route path="/discover" element={ user ? <Discover userId={user.id ? user.id : user.user.id} /> : <Landing />} />                     {/* Discover page, shows potential matches based on swiping algorithm. */}
+            <Route path="/matches" element={ user ? <MatchesPage userId={user.id ? user.id : user.user.id} /> : <Landing />} />                  {/* Matches page, shows all the user's matches. */}
+             <Route path="/discover" element={ user ? <Discover userId={user.id ? user.id : user.user.id} /> : <Landing />} />                     {/* Discover page, shows potential matches based on swiping algorithm. */}
             <Route path="/admin" element={<AdminDashboard />} />
-            <Route
-              path="/suggested"
-              element={
-                user ? <SuggestedMatches userId={user.id? user.id : user.user.id} /> : <></>
-              }
-            />
             <Route path="/profile" element={<Profile user={user} updateUser={updateUser} />} /> {/* User's profile to edit their information */}
             <Route
               path="/about"

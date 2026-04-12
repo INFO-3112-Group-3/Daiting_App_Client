@@ -1,6 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { CheckCircle2, Crown, Sparkles } from 'lucide-react'
-
+import * as api from "../utils/api";
 const tiers = [
   {
     title: 'Likes',
@@ -21,10 +21,23 @@ const tiers = [
 
 const features = ['Unlimited Swipes', 'See Who Liked You', 'Private Mode', 'Priority Support']
 
-export default function PremiumModal({ open, onClose }) {
+export default function PremiumModal(props) {
+  
+  const upradeToPremium = async() =>
+  {
+      console.log(props.fullUser);
+      props.fullUser.user.isPaidUser = true;
+      let response = await api.users.update(props.fullUser.user);
+
+      if (response.ok)
+      {
+        props.onClose();
+      }
+  }
+  
   return (
     <AnimatePresence>
-      {open ? (
+      {props.open ? (
         <motion.div
           className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 px-4 py-10"
           initial={{ opacity: 0 }}
@@ -47,7 +60,7 @@ export default function PremiumModal({ open, onClose }) {
               </div>
               <button
                 type="button"
-                onClick={onClose}
+                onClick={props.onClose}
                 className="text-xs text-zinc-400 hover:text-white"
               >
                 Close
@@ -76,8 +89,10 @@ export default function PremiumModal({ open, onClose }) {
                 </div>
               ))}
             </div>
+            <p className="text-sm font-semibold text-white">Payment Info</p>
             <button
               type="button"
+              onClick={upradeToPremium}
               className="mt-6 flex w-full items-center justify-center gap-2 rounded-2xl border border-rose/60 bg-gradient-to-r from-rose/40 via-rose/10 to-rose/40 bg-[length:200%_200%] px-4 py-3 text-sm font-semibold text-white shadow-rose transition animate-shimmer"
             >
               <Sparkles size={16} />

@@ -4,6 +4,7 @@ import SkillPill from '../components/SkillPill'
 import { InputField } from '../components/InputField';
 import * as api from "../utils/api";
 import TagInput from '../components/TagInput';
+import PremiumModal from '../components/PremiumModal';
 
 export default function Profile(props) {
   //////////////////////////////////////////////////////////////////////
@@ -45,8 +46,8 @@ export default function Profile(props) {
     profilePictureBase64: null
   })
   const [prefForm, setPrefForm] = useState({
-    Importance: "",
-    PrefInfo: ""
+    importance: "0",
+    info: ""
   })
   const [isFormFieldEditable, setIsFormFieldEditable] = useState({
     nickname: false,
@@ -64,6 +65,8 @@ export default function Profile(props) {
     skills: false,
     preferences: false
   })
+
+  const importanceArr= [ -5,-4,-3,-2,-1,0,1,2,3,4,5];
   const [saveStatus, setSaveStatus] = useState('')
 
   // Skills related states.
@@ -75,8 +78,11 @@ export default function Profile(props) {
   //Preference related states
   const [allPrefOptions, setAllPrefOptions] = useState([]);
   const [userPrefs,setUserPrefs] = useState([]);
-  const [prefInput, setPrefInput] = useState("");
+  const [prefInput, setPrefInput] = useState("Gender");
   
+  //used for payment modal
+  const [premiumOpen, setPremiumOpen] = useState(false);
+
   // Ref for the hidden file input for avatar upload.
   const uploadedProfilePictureFile = useRef(null)
 
@@ -133,7 +139,6 @@ export default function Profile(props) {
       setUserSkills(data.skills || [])
       setUserPrefs(data.preferences || [])
 
-      console.log(data.preferences)
       setInputFormData({
         nickname: data.nickname || '',
         email: data.email || '',
@@ -157,6 +162,7 @@ export default function Profile(props) {
     }
 
     loadUser()
+    
   }, [props.user])
 
   const handleInputFormChanges = ({ target }) => {
@@ -418,7 +424,13 @@ export default function Profile(props) {
             })}
           </select>
           <InputField className="input" placeholder="EnterInfo" value={prefForm.info} name="info" onChange={handleChange}/>
-          <InputField className="input" placeholder="Importance Value" value={prefForm.importance} name="importance" onChange={handleChange}/>
+          <select name ="importance" className="input"
+                  value={prefForm.importance}
+                  onChange={handleChange}>
+                    {importanceArr.map((val) => (
+                      <option key={val} value={val}>{val}</option>
+                    ))}
+          </select>
           <button
             type="submit"
             className="rounded-2xl border border-amber-300/60 bg-amber-300/15 px-5 py-3 text-sm font-semibold text-white shadow-[0_0_20px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
@@ -430,7 +442,7 @@ export default function Profile(props) {
   }
 
   const renderProfileHeader = () => {
-    return (<div className="flex w-full flex-col gap-6">
+   return (<div className="flex w-full flex-col gap-6">
       <div className="soft-card flex flex-col items-center gap-4 p-8">
         <div className="h-28 w-28 overflow-hidden rounded-full border border-amber-300/40 bg-gradient-to-br from-amber-300/40 via-zinc-900 to-black">
           {fullUser.profilePictureBase64 ? (
