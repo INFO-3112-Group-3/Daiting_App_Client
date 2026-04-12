@@ -44,7 +44,7 @@ export default function Landing(props) {
               type="button"
               onClick={handleClick}
               className="rounded-full border border-amber-300/60 bg-amber-300/15 px-6 py-3 text-sm font-semibold text-white shadow-[0_0_25px_rgba(251,191,36,0.25)] transition hover:bg-amber-300/25"
-            >{props.user.user && !props.user.user.isPaidUser ? "Upgrade To Premium User" : "Create an Account"}</button>
+            >{props.user && !props.user.user.isPaidUser ? "Upgrade To Premium User" : "Create an Account"}</button>
           </div>
         </div>
         <div className="relative">
