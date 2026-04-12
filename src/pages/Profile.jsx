@@ -196,7 +196,7 @@ export default function Profile(props) {
       dateOfBirth: inputFormData.dateOfBirth,
       interests: inputFormData.interests,
       skills: userSkills,
-      preferences: inputFormData.preferences,
+      preferences: userPrefs,
       bio: inputFormData.bio,
     }
 
