@@ -59,15 +59,15 @@ export default function Discover({userId}) {
 
     if (action === 'pass') {
       setDirection(-1);
-      //await api.matches.decline(requesterId, targetId);
+      await api.matches.decline(requesterId, targetId);
     }
     else if (action === 'connect' || action === 'super') {
       setDirection(1)
-      // const result = await api.matches.connect(requesterId, targetId);
+      const result = await api.matches.connect(requesterId, targetId);
 
-      // if (result.isMutual){
-      //   setConnectionOpen(true)
-      // }
+      if (result.isMutual){
+        setConnectionOpen(true)
+      }
     }
 
     setActiveIndex((prev) => prev + 1);
