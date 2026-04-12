@@ -9,7 +9,6 @@ import SignUp from './pages/SignUp'
 import MatchesPage from './pages/matches'
 import SimplePage from './pages/SimplePage'
 import { useState } from "react"
-import * as api from "../src/utils/api"
 import AdminDashboard from './pages/AdminDashboard'
 
 

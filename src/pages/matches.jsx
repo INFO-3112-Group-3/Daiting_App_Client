@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Loader2 } from 'lucide-react';
 import * as api from "../utils/api";
-import MatchDetailModal from '../components/MatchDetailModal';
+
 
 export default function MatchesPage({ userId }) {
     const [matches, setMatches] = useState([]);

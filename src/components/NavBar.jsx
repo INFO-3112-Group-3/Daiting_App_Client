@@ -38,15 +38,15 @@ export default function NavBar(props) {
   // Don't show the signup nav item if the user is logged in.
   if (props.user) {
     navItems.splice(navItems.findIndex(item => item.to === '/signup'), 1);
+    if (props.user.user?.isAdminUser)
+    { 
+     navItems.push({ label: 'Admin Tools', to: '/admin' });
+    }
+    if (!props.user.user?.isPaidUser)
+    {
+     navItems.splice(navItems.findIndex(item => item.to === '/matches'),2);
+    }
 
-  }
-  if (props.user?.user?.isAdminUser)
-  {
-    navItems.push({ label: 'Admin Tools', to: '/admin' });
-  }
-  if (!props.user?.user?.isPaidUser)
-  {
-    navItems.splice(navItems.findIndex(item => item.to === '/matches'),2);
   }
 
   return (

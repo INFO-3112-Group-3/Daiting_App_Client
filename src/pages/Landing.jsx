@@ -1,5 +1,4 @@
 import { Link,useNavigate } from 'react-router-dom'
-import { ArrowRight } from 'lucide-react'
 import {useState} from 'react'
 import PremiumModal from '../components/PremiumModal';
 export default function Landing(props) {
@@ -10,7 +9,6 @@ export default function Landing(props) {
 
   const handleClick = async () =>
   {
-    console.log(props.user.user);
       if (props.user.user && !props.user.user.isPaidUser)
       {
         setPremiumOpen(true);

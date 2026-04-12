@@ -2,7 +2,7 @@ import { useMemo, useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Heart, Star, X } from 'lucide-react'
 import ActionButton from '../components/ActionButton'
-import MatchDetailModal from '../components/MatchDetailModal'
+import ConnectionModal from '../components/ConnectionModal'
 import PremiumModal from '../components/PremiumModal'
 import ProfileCard from '../components/ProfileCard'
 import * as api from "../utils/api"
@@ -28,7 +28,7 @@ export default function Discover({userId}) {
   const [loading, setLoading] = useState(true)
   const [activeIndex, setActiveIndex] = useState(0)
   const [direction, setDirection] = useState(1)
-  const [matchedProfile, setMatchedProfile] = useState(false)
+  const [connectionOpen, setConnectionOpen] = useState(false)
   const [premiumOpen, setPremiumOpen] = useState(false)
 
   useEffect(() => {
@@ -56,23 +56,18 @@ export default function Discover({userId}) {
 
     const targetId = currentProfile.id;
     const requesterId = userId;
-    const profileToMatch = currentProfile; // Keep reference before activeIndex increments
 
-    try {
-        if (action === 'pass') {
-          setDirection(-1);
-          await api.matches.decline(requesterId, targetId);
-        }
-        else if (action === 'connect' || action === 'super') {
-          setDirection(1)
-          const result = await api.matches.connect(requesterId, targetId);
+    if (action === 'pass') {
+      setDirection(-1);
+      await api.matches.decline(requesterId, targetId);
+    }
+    else if (action === 'connect' || action === 'super') {
+      setDirection(1)
+      const result = await api.matches.connect(requesterId, targetId);
 
-          if (result.isMutual){
-            setMatchedProfile(profileToMatch)
-          }
-        }
-    } catch (error) {
-        console.error("Action failed", error);
+      if (result.isMutual){
+        setConnectionOpen(true)
+      }
     }
 
     setActiveIndex((prev) => prev + 1);
@@ -134,12 +129,7 @@ export default function Discover({userId}) {
         <ActionButton icon={Heart} label="Connect" tone="rose" onClick={() => handleAction('connect')} />
       </div>
 
-      <MatchDetailModal 
-        open={!!matchedProfile} 
-        onClose={() => setMatchedProfile(null)} 
-        profile={matchedProfile}
-        currentUserId={userId}
-      />
+      <ConnectionModal open={connectionOpen} onClose={() => setConnectionOpen(false)} />
       <PremiumModal open={premiumOpen} onClose={() => setPremiumOpen(false)} />
     </div>
   )
