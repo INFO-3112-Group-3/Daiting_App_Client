@@ -1,30 +1,80 @@
-import { motion } from 'framer-motion'
-import { Heart } from 'lucide-react'
+import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
+import { Star, Heart, Loader2 } from 'lucide-react'; // For a nice spinner
+import * as api from "../utils/api";
+import MatchDetailModal from '../components/MatchDetailModal';
 
-// Lightweight fade animation shared across auth-related screens.
-const container = {
-	hidden: { opacity: 0 },
-	visible: { opacity: 1, transition: { duration: 0.3 } },
-}
+export default function MatchesPage({ userId }) {
+    const [matches, setMatches] = useState([]);
+    const [loading, setLoading] = useState(true); // Start as true
+    const [selectedMatchData, setSelectedMatchData] = useState(null);
 
-export default function MatchesPage() {
-	return (
-		<motion.section
-			className="flex min-h-[70vh] items-center justify-center py-10"
-			variants={container}
-			initial="hidden"
-			animate="visible"
-			exit="hidden"
-		>
-			<div className="surface-card w-full max-w-md px-6 py-10 text-center">
-				<div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#00D1FF] text-black">
-					<Heart className="h-6 w-6" />
-				</div>
-				<h1 className="mt-6 text-2xl font-semibold text-white">No matches yet</h1>
-				<p className="mt-3 text-sm text-[#A1A1AA]">
-					Keep swiping to find someone who codes and communicates like you do.
-				</p>
-			</div>
-		</motion.section>
-	)
+    useEffect(() => {
+        const fetchMatches = async () => {
+            try {
+                setLoading(true);
+                const data = await api.matches.getAccepted(userId);
+                setMatches(data);
+            } catch (err) {
+                console.error("Error loading matches:", err);
+            } finally {
+                setLoading(false); // Stop loading regardless of result
+            }
+        };
+        fetchMatches();
+    }, [userId]);
+
+    // 1. Loading State
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-white">
+                <Loader2 className="animate-spin text-rose mb-4" size={40} />
+                <p className="text-zinc-400 animate-pulse">Retrieving your matches...</p>
+            </div>
+        );
+    }
+
+    // 2. Empty State (only shows after loading is finished)
+    if (matches.length === 0) {
+        return (
+            <div className="text-center text-white py-20">
+                <h1 className="text-2xl font-bold">No matches yet</h1>
+                <p className="text-zinc-400">Keep swiping to find your pair programmer!</p>
+            </div>
+        );
+    }
+
+    return (
+        <section className="mx-auto max-w-6xl px-6 py-16">
+            <h1 className="text-3xl font-bold text-white mb-8">Your Connections</h1>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                {matches.map((item) => (
+                    <motion.div 
+                        key={item.profile.id}
+                        whileHover={{ scale: 1.02, translateY: -5 }}
+                        onClick={() => setSelectedMatchData(item)}
+                        className="glass cursor-pointer overflow-hidden rounded-2xl border border-white/10 hover:border-rose/50 transition-colors"
+                    >
+                        <img src={item.profile.profilePicture || '/default-avatar.png'} className="h-48 w-full object-cover" />
+                        <div className="p-4 bg-gradient-to-t from-black/80 to-transparent">
+                            <h3 className="font-semibold text-white">{item.profile.firstName}</h3>
+                            <div className="flex items-center gap-1 mt-1">
+                                <Star size={12} className={item.rating > 0 ? "fill-rose text-rose" : "text-zinc-500"} />
+                                <span className="text-[10px] text-zinc-400">
+                                    {item.rating > 0 ? `Rated ${item.rating}/5` : 'Not rated'}
+                                </span>
+                            </div>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+
+            <MatchDetailModal 
+                open={!!selectedMatchData} 
+                onClose={() => setSelectedMatchData(null)} 
+                matchData={selectedMatchData}
+                currentUserId={userId}
+            />
+        </section>
+    );
 }

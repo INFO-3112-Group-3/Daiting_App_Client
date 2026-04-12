@@ -167,6 +167,14 @@ const matches ={
         })
         let data = await response.json();
         return data;
+    },
+    getAccepted: async (userId) => {
+        let response = await fetch(serverRoute(`api/matches/${userId}/accepted`),{
+            headers,
+            method: 'GET',
+        })
+        let data = await response.json();
+        return data;
     }
 }
 
