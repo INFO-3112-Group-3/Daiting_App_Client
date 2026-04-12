@@ -45,7 +45,7 @@ export default function App() {
             <Route path="/signup" element={<SignUp />} />                         {/* Signup page */}
             <Route path="/signin" element={<SignIn updateUser={updateUser} />} /> {/* Signin page, button on the top right of navbar. */}
             <Route path="/matches" element={<MatchesPage />} />                   {/* Matches page, shows all the user's matches. */}
-            <Route path="/discover" element={<Discover />} />                     {/* Discover page, shows potential matches based on swiping algorithm. */}
+            <Route path="/discover" element={ user ? <Discover userId={user.id ? user.id : user.user.id} /> : <Landing />} />                     {/* Discover page, shows potential matches based on swiping algorithm. */}
             <Route path="/admin" element={<AdminDashboard />} />
             <Route
               path="/suggested"

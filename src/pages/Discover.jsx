@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Heart, Star, X } from 'lucide-react'
 import ActionButton from '../components/ActionButton'
 import ConnectionModal from '../components/ConnectionModal'
 import PremiumModal from '../components/PremiumModal'
 import ProfileCard from '../components/ProfileCard'
-import { profiles } from '../data/profiles'
+import * as api from "../utils/api"
 
 const cardVariants = {
   enter: (direction) => ({
@@ -23,35 +23,66 @@ const cardVariants = {
   }),
 }
 
-export default function Discover() {
+export default function Discover({userId}) {
+  const [profiles, setProfiles] = useState([])
+  const [loading, setLoading] = useState(true)
   const [activeIndex, setActiveIndex] = useState(0)
   const [direction, setDirection] = useState(1)
   const [connectionOpen, setConnectionOpen] = useState(false)
   const [premiumOpen, setPremiumOpen] = useState(false)
 
+  useEffect(() => {
+    const loadProfiles = async () => {
+      try {
+        const data = await api.users.getSuggestedMatches(userId)
+        const realProfiles = data.map(match => match.profile)
+        setProfiles(realProfiles)
+      } catch (error) {
+        console.error("Failed to load matches: ", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+    loadProfiles()
+  }, [userId])
+
   const currentProfile = useMemo(
-    () => profiles[activeIndex % profiles.length],
-    [activeIndex],
+    () => profiles[activeIndex] || null,
+    [activeIndex, profiles],
   )
 
-  const handleAction = (action) => {
+  const handleAction = async (action) => {
+    if (!currentProfile) return
+
+    const targetId = currentProfile.id;
+    const requesterId = userId;
+
     if (action === 'pass') {
-      setDirection(-1)
-      setActiveIndex((prev) => prev + 1)
-      return
+      setDirection(-1);
+      //await api.matches.decline(requesterId, targetId);
+    }
+    else if (action === 'connect' || action === 'super') {
+      setDirection(1)
+      // const result = await api.matches.connect(requesterId, targetId);
+
+      // if (result.isMutual){
+      //   setConnectionOpen(true)
+      // }
     }
 
-    if (action === 'super') {
-      setDirection(1)
-      setActiveIndex((prev) => prev + 1)
-      return
-    }
+    setActiveIndex((prev) => prev + 1);
+  }
 
-    if (action === 'connect') {
-      setDirection(1)
-      setConnectionOpen(true)
-      setActiveIndex((prev) => prev + 1)
-    }
+  if (loading) return <div className="text-white text-center py-20">Finding matches...</div>
+
+  // End of feed state
+  if (!currentProfile && !loading) {
+    return (
+      <div className="text-white text-center py-20">
+        <h2 className="text-2xl font-bold">You've seen everyone!</h2>
+        <p className="text-zinc-400">Check back later for more suggestions.</p>
+      </div>
+    )
   }
 
   return (
