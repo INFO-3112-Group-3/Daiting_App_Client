@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Star, Loader2 } from 'lucide-react';
+import MatchDetailModal from '../components/MatchDetailModal';
 import * as api from "../utils/api";
 
 
